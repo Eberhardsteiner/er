@@ -3,33 +3,60 @@
 // Ausgabe als Liste je Lektion, Exit-Code ungleich null bei Befund.
 
 import { lektionen, startBilanz } from '../src/content';
-import type { Bilanz, Lektion } from '../src/content/typen';
+import type { Bilanz, Lektion, RundenId } from '../src/content/typen';
 import { pruefeBilanz, summeSeite, wendeDeltaAn } from '../src/engine/bilanz';
 import { kennwortFuerRunde } from '../src/engine/kennwort';
 
-// Kontrollwerte der Musterbilanz nach Runde 3 (Mega-Prompt 4, Abschnitt 3.5).
-const KONTROLLWERTE_R3: { postenId: string; betrag: number }[] = [
-  { postenId: 'immaterielle', betrag: 15000 },
-  { postenId: 'maschinen', betrag: 120000 },
-  { postenId: 'vorraete', betrag: 60000 },
-  { postenId: 'bank', betrag: 95000 },
-  { postenId: 'stammkapital', betrag: 100000 },
-  { postenId: 'ergebnis', betrag: -20000 },
-  { postenId: 'bankdarlehen', betrag: 150000 },
-  { postenId: 'lieferverb', betrag: 60000 },
-];
-const BILANZSUMME_R3 = 290000;
+// Kontrollwerte der Musterbilanz je Runde (aus den Mega-Prompts der Phasen).
+// Die Kette Gruendungsbilanz, R3, R4 muss in Folge exakt stimmen.
+interface Kontrollwerte {
+  bilanzsumme: number;
+  posten: { postenId: string; betrag: number }[];
+}
 
-function pruefeKontrollwerteR3(bilanz: Bilanz): string[] {
+const KONTROLLWERTE: Partial<Record<RundenId, Kontrollwerte>> = {
+  R3: {
+    bilanzsumme: 290000,
+    posten: [
+      { postenId: 'immaterielle', betrag: 15000 },
+      { postenId: 'maschinen', betrag: 120000 },
+      { postenId: 'vorraete', betrag: 60000 },
+      { postenId: 'bank', betrag: 95000 },
+      { postenId: 'stammkapital', betrag: 100000 },
+      { postenId: 'ergebnis', betrag: -20000 },
+      { postenId: 'bankdarlehen', betrag: 150000 },
+      { postenId: 'lieferverb', betrag: 60000 },
+    ],
+  },
+  R4: {
+    bilanzsumme: 740000,
+    posten: [
+      { postenId: 'immaterielle', betrag: 15000 },
+      { postenId: 'grundstuecke', betrag: 128400 },
+      { postenId: 'gebaeude', betrag: 299600 },
+      { postenId: 'maschinen', betrag: 159000 },
+      { postenId: 'vorraete', betrag: 108000 },
+      { postenId: 'bank', betrag: 30000 },
+      { postenId: 'stammkapital', betrag: 100000 },
+      { postenId: 'ergebnis', betrag: -20000 },
+      { postenId: 'bankdarlehen', betrag: 600000 },
+      { postenId: 'lieferverb', betrag: 60000 },
+    ],
+  },
+};
+
+function pruefeKontrollwerte(runde: RundenId, bilanz: Bilanz): string[] {
+  const kontrollwerte = KONTROLLWERTE[runde];
+  if (!kontrollwerte) return [];
   const fehler: string[] = [];
   const allePosten = [...bilanz.aktiva, ...bilanz.passiva].flatMap((g) => g.posten);
-  for (const kontrolle of KONTROLLWERTE_R3) {
+  for (const kontrolle of kontrollwerte.posten) {
     const posten = allePosten.find((p) => p.id === kontrolle.postenId);
     if (!posten) {
-      fehler.push(`Kontrollwert R3: Posten "${kontrolle.postenId}" fehlt in der Bilanz.`);
+      fehler.push(`Kontrollwert ${runde}: Posten "${kontrolle.postenId}" fehlt in der Bilanz.`);
     } else if (posten.betrag !== kontrolle.betrag) {
       fehler.push(
-        `Kontrollwert R3: Posten "${kontrolle.postenId}" hat ${posten.betrag}, erwartet ${kontrolle.betrag}.`,
+        `Kontrollwert ${runde}: Posten "${kontrolle.postenId}" hat ${posten.betrag}, erwartet ${kontrolle.betrag}.`,
       );
     }
   }
@@ -38,8 +65,10 @@ function pruefeKontrollwerteR3(bilanz: Bilanz): string[] {
     ['Passiva', bilanz.passiva],
   ] as const) {
     const summe = summeSeite(gruppen);
-    if (summe !== BILANZSUMME_R3) {
-      fehler.push(`Kontrollwert R3: ${seite}-Summe ist ${summe}, erwartet ${BILANZSUMME_R3}.`);
+    if (summe !== kontrollwerte.bilanzsumme) {
+      fehler.push(
+        `Kontrollwert ${runde}: ${seite}-Summe ist ${summe}, erwartet ${kontrollwerte.bilanzsumme}.`,
+      );
     }
   }
   return fehler;
@@ -160,8 +189,8 @@ for (const lektion of lektionen) {
     }
   }
 
-  if (lektion.id === 'R3') {
-    fehler.push(...pruefeKontrollwerteR3(laufendeBilanz));
+  if (!lektion.nurTrainer) {
+    fehler.push(...pruefeKontrollwerte(lektion.id, laufendeBilanz));
   }
 
   if (fehler.length === 0) {
