@@ -35,6 +35,28 @@ describe('wendeDeltaAn', () => {
     expect(startBilanz.aktiva.length).toBe(1);
   });
 
+  it('fuegt neue Posten ueber postenEinfuegenVor an der richtigen Stelle ein', () => {
+    const delta: BilanzDelta = {
+      erlaeuterung: 'Test',
+      neuerStichtagLabel: 'Test',
+      neuePosten: [
+        {
+          seite: 'aktiva',
+          gruppe: 'Umlaufvermögen',
+          postenEinfuegenVor: 'bank',
+          posten: { id: 'vorraete', name: 'Vorräte' },
+        },
+      ],
+      aenderungen: [
+        { postenId: 'vorraete', delta: 60000 },
+        { postenId: 'bankdarlehen', delta: 60000 },
+      ],
+    };
+    const neu = wendeDeltaAn(startBilanz, delta);
+    const umlauf = neu.aktiva.find((g) => g.name === 'Umlaufvermögen');
+    expect(umlauf?.posten.map((p) => p.id)).toEqual(['vorraete', 'bank']);
+  });
+
   it('wirft bei unbekannter postenId einen Fehler', () => {
     const delta: BilanzDelta = {
       erlaeuterung: 'Test',

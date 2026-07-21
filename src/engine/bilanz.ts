@@ -45,7 +45,15 @@ export function wendeDeltaAn(bilanz: Bilanz, delta: BilanzDelta): Bilanz {
         seite.push(gruppe);
       }
     }
-    gruppe.posten.push({ id: anlage.posten.id, name: anlage.posten.name, betrag: 0 });
+    const neuerPosten = { id: anlage.posten.id, name: anlage.posten.name, betrag: 0 };
+    const vorPostenIndex = anlage.postenEinfuegenVor
+      ? gruppe.posten.findIndex((p) => p.id === anlage.postenEinfuegenVor)
+      : -1;
+    if (vorPostenIndex >= 0) {
+      gruppe.posten.splice(vorPostenIndex, 0, neuerPosten);
+    } else {
+      gruppe.posten.push(neuerPosten);
+    }
   }
 
   for (const aenderung of delta.aenderungen) {

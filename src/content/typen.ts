@@ -91,10 +91,14 @@ export interface Bilanz {
 // bislang nicht vorhandene Bilanzposten anzulegen (mit Seite und Gruppe).
 // gruppeEinfuegenVor steuert optional die Einfuegeposition einer neuen Gruppe,
 // damit etwa das Anlagevermoegen vor dem Umlaufvermoegen erscheint.
+// postenEinfuegenVor steuert optional die Einfuegeposition innerhalb der
+// Gruppe (id eines bestehenden Postens), damit etwa die Vorraete vor dem
+// Bankguthaben stehen (Anzeigeordnung nach § 224 UGB, ergaenzt in Runde 3).
 export interface NeuerPosten {
   seite: 'aktiva' | 'passiva';
   gruppe: string;
   gruppeEinfuegenVor?: string;
+  postenEinfuegenVor?: string;
   posten: { id: string; name: string };
 }
 
