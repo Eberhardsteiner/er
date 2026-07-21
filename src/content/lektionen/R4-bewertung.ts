@@ -2,6 +2,7 @@
 //
 // Rechtsstand 21.07.2026, § 203 UGB im Volltext geprueft, § 204, § 207 und
 // § 208 gegen Skript Teil C abgeglichen.
+// § 7 Abs 2 EStG (Halbjahresregel) auf fachliche Vorgabe von Dr. Steiner ergaenzt, 21.07.2026.
 //
 // Alle fachlichen Texte und Bilanzwerte stammen woertlich beziehungsweise
 // zahlengenau aus dem Mega-Prompt 5 (Runde 4) und duerfen nicht veraendert werden.
@@ -98,6 +99,10 @@ export const lektionR4: Lektion = {
         {
           typ: 'absatz',
           text: 'Abgeschrieben wird monatsgenau (pro rata temporis) ab Inbetriebnahme, auf volle Monate gerundet. Die lineare Abschreibung teilt die Anschaffungskosten gleichmäßig: Jahresabschreibung gleich Anschaffungskosten durch Nutzungsdauer. Geringwertige Vermögensgegenstände dürfen im Anschaffungsjahr voll abgeschrieben werden (§ 204 Abs 1a UGB), in der Praxis orientiert an der steuerlichen Grenze des § 13 EStG von 1.000 Euro netto.',
+        },
+        {
+          typ: 'absatz',
+          text: 'Ein Wort zur Praxis: Steuerlich erlaubt die Halbjahresregel des § 7 Abs 2 EStG eine Vereinfachung. Bei Inbetriebnahme im ersten Halbjahr gibt es die volle, im zweiten Halbjahr die halbe Jahresabschreibung, und viele Unternehmen übernehmen das auch unternehmensrechtlich. AlpenRad entscheidet sich bewusst für die monatsgenaue Abschreibung: Die Bank soll heuer ein möglichst gutes Ergebnis sehen, und bei den Mai-Anschaffungen wäre die Halbjahresregel teurer, weil sie die volle statt der 8/12-Abschreibung bedeutet. Beide Wege sind vertretbar, die getroffene Wahl bindet über die Stetigkeit (Runde 2).',
         },
         {
           typ: 'beispiel',
@@ -427,7 +432,7 @@ export const lektionR4: Lektion = {
       id: 'F4-4',
       titel: 'Der Abschreibungsplan',
       sachverhalt:
-        'Mag. Huber lässt Dich den Abschreibungsplan für die Montagelinie aufstellen: Anschaffungskosten 120.000 Euro, Nutzungsdauer 10 Jahre, lineares Verfahren, in Betrieb seit Anfang Mai. Gebucht wird die Abschreibung erst zum Abschlussstichtag.',
+        'Mag. Huber lässt Dich den Abschreibungsplan für die Montagelinie aufstellen: Anschaffungskosten 120.000 Euro, Nutzungsdauer 10 Jahre, lineares Verfahren, in Betrieb seit Anfang Mai. Gebucht wird die Abschreibung erst zum Abschlussstichtag. Lena stellt klar: ‚Der Bank wollen wir heuer ein möglichst gutes Ergebnis zeigen. Deshalb schreiben wir monatsgenau ab und nicht nach der steuerlichen Halbjahresregel.‘',
       teilaufgaben: [
         {
           id: 'F4-4a',
@@ -471,7 +476,7 @@ export const lektionR4: Lektion = {
       hilfe:
         'Jahresabschreibung: Anschaffungskosten durch Nutzungsdauer. Erstes Jahr: Mai bis Dezember sind 8 Monate, also 8/12 der Jahresabschreibung.',
       loesung:
-        'Jahresabschreibung: 120.000 durch 10 gleich 12.000 Euro. Im ersten Jahr läuft die Nutzung von Mai bis Dezember, also 8 von 12 Monaten: 12.000 mal 8/12 gleich 8.000 Euro (pro rata temporis). Das lineare Verfahren verteilt gleichmäßig, degressiv fällt, leistungsabhängig schwankt mit der Leistung, progressiv ist nur in Ausnahmefällen GoB-konform. Gebucht wird zum Abschlussstichtag: In Runde 5 werden alle planmäßigen Abschreibungen des Jahres (laut Anlagenverzeichnis zusammen 15.695 Euro) in der Bilanz wirksam.',
+        'Jahresabschreibung: 120.000 durch 10 gleich 12.000 Euro. Im ersten Jahr läuft die Nutzung von Mai bis Dezember, also 8 von 12 Monaten: 12.000 mal 8/12 gleich 8.000 Euro (pro rata temporis). Das lineare Verfahren verteilt gleichmäßig, degressiv fällt, leistungsabhängig schwankt mit der Leistung, progressiv ist nur in Ausnahmefällen GoB-konform. Gebucht wird zum Abschlussstichtag: In Runde 5 werden alle planmäßigen Abschreibungen des Jahres (laut Anlagenverzeichnis zusammen 15.695 Euro) in der Bilanz wirksam. Zur Methodenwahl: Nach der steuerlichen Halbjahresregel (§ 7 Abs 2 EStG) bekämen die Mai-Anschaffungen die volle Jahresabschreibung (Montagelinie 12.000 statt 8.000, CAD-Lizenz 3.000 statt 2.000), die Juli-Anschaffungen die halbe, dort ändert sich gegenüber der monatsgenauen Rechnung nichts. Der Abschreibungsaufwand des ersten Jahres läge damit bei 20.695 statt 15.695 Euro. Weil AlpenRad einen möglichst hohen Gewinn ausweisen will, bleibt es bei der monatsgenauen Abschreibung. Diese Wahl ist künftig stetig beizubehalten.',
     },
   ],
   bilanzDelta: {

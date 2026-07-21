@@ -81,6 +81,11 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Summe der planmäßigen Abschreibungen des ersten Geschäftsjahres: 15.695,
   Buchung zum 31.12. in Runde 5. Abschreibungen erfolgen monatsgenau (pro rata
   temporis) ab Inbetriebnahme, lineares Verfahren, kein Restwertabzug.
+- Methodenwahl: monatsgenaue Abschreibung (pro rata temporis), bewusst gewählt,
+  weil AlpenRad gegenüber der Bank einen möglichst hohen Gewinn ausweisen will.
+  Die steuerliche Halbjahresregel (§ 7 Abs 2 EStG) ergäbe 20.695 statt 15.695
+  (Mehraufwand 5.000 bei den Mai-Anschaffungen). Für Runde 5 gilt verbindlich
+  15.695. Die Wahl ist stetig beizubehalten.
 
 ## Rechtsquellenprinzip
 
