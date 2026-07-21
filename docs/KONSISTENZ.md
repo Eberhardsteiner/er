@@ -32,6 +32,12 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Steuerberaterin Mag. Kern.
 - Grazer Bike-Logistik GmbH & Co KG.
 - Steirische Landesbank.
+- Steira Components AG: fiktive börsennotierte AG für Wertpapier-Übungsszenarien.
+
+## Übungsszenarien und Musterbilanz
+
+- Die Fallszenarien der Runden 1 und 2 sind Übungsszenarien ohne Wirkung auf die
+  Musterbilanz. Bilanzwirksame Geschäftsfälle beginnen mit Runde 3.
 
 ## Rechtsquellenprinzip
 
