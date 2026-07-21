@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-petrol-900: #093a47;
+  --color-petrol-700: #0f4c5c;
+  --color-petrol-500: #1b6e83;
+  --color-petrol-100: #e3eef1;
+  --color-amber-500: #f2a541;
+  --color-amber-600: #d98b1f;
+  --color-erfolg: #2e7d5b;
+  --color-fehler: #c4453c;
+  --color-warnung: #b3560e;
+  --color-seite: #f7f9fa;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html {
+  background-color: var(--color-seite);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-gray-900);
+}
+
+/* Sichtbarer Fokus fuer Tastaturbedienung */
+:focus-visible {
+  outline: 2px solid var(--color-petrol-500);
+  outline-offset: 2px;
+}
+
+@keyframes toast-rein {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-animation {
+  animation: toast-rein 0.25s ease-out;
+}
+
+@keyframes sanft-rein {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.einblenden {
+  animation: sanft-rein 0.2s ease-out;
+}
