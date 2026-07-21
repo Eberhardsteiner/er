@@ -3,7 +3,7 @@ import { CheckCircle2, Lock, PlayCircle } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 import { BilanzAnsicht } from '../../components/BilanzAnsicht';
 import { Card } from '../../components/Card';
-import { alleRundenIds, findeLektion } from '../../content';
+import { alleRundenIds, findeLektion, platzhalterTitel } from '../../content';
 import type { RundenId } from '../../content/typen';
 import { aktuelleBilanz, gesamtPunkte } from '../../engine/ableitung';
 import { MAX_PUNKTE_GESAMT } from '../../engine/scoring';
@@ -27,12 +27,17 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
   const lektion = findeLektion(rundenId);
 
   if (!lektion) {
+    const titel = platzhalterTitel[rundenId];
     return (
       <Card className="flex min-h-32 flex-col justify-between bg-gray-50 opacity-70">
         <p className="font-semibold text-gray-500">
-          {rundenId === 'R0' ? 'Probelauf' : `Runde ${rundenId.slice(1)}`}
+          Runde {rundenId.slice(1)}
+          {titel ? `: ${titel}` : ''}
         </p>
-        <p className="text-sm text-gray-400">Inhalt folgt</p>
+        <div className="mt-3 flex items-center justify-between">
+          <p className="text-sm text-gray-400">Inhalt folgt</p>
+          <Lock size={18} className="shrink-0 text-gray-400" aria-hidden="true" />
+        </div>
       </Card>
     );
   }
@@ -59,7 +64,9 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
       <div>
         <div className="flex items-start justify-between gap-2">
           <p className="font-semibold text-petrol-900">
-            {rundenId === 'R0' ? 'Probelauf' : `Runde ${rundenId.slice(1)}: ${lektion.titel}`}
+            {lektion.nurTrainer
+              ? `${rundenId} ${lektion.titel} (nur Trainer)`
+              : `Runde ${rundenId.slice(1)}: ${lektion.titel}`}
           </p>
           {gesperrt ? (
             <Lock size={18} className="shrink-0 text-gray-400" aria-hidden="true" />
@@ -84,11 +91,18 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
 export function DashboardSeite() {
   const name = useSpielstand((s) => s.name);
   const runden = useSpielstand((s) => s.runden);
+  const istTrainer = useSpielstand((s) => s.istTrainer);
 
   const punkte = gesamtPunkte(runden);
   const bilanz = aktuelleBilanz(runden);
   const probelauf = rundenPunkte(runden.R0);
-  const probelaufAusgewertet = runden.R0.status === 'ausgewertet' && !runden.R0.uebersprungen;
+  const probelaufAusgewertet =
+    istTrainer && runden.R0.status === 'ausgewertet' && !runden.R0.uebersprungen;
+
+  // Nur-Trainer-Runden (Demo-Runde R0) sind fuer Studierende unsichtbar.
+  const sichtbareRundenIds = alleRundenIds.filter(
+    (id) => istTrainer || findeLektion(id)?.nurTrainer !== true,
+  );
 
   return (
     <div>
@@ -100,7 +114,7 @@ export function DashboardSeite() {
 
       <div className="mt-6 flex flex-col gap-8 lg:flex-row">
         <div className="grid flex-1 grid-cols-1 gap-4 self-start md:grid-cols-2">
-          {alleRundenIds.map((id) => (
+          {sichtbareRundenIds.map((id) => (
             <RundenKarte key={id} rundenId={id} />
           ))}
         </div>
@@ -109,7 +123,8 @@ export function DashboardSeite() {
           <h2 className="mb-3 font-semibold text-petrol-900">Bilanz der AlpenRad GmbH</h2>
           <BilanzAnsicht bilanz={bilanz} />
           <p className="mt-4 rounded-lg bg-petrol-100 p-3 text-xs text-petrol-900">
-            Die Bilanz folgt der Musterlösung und wächst ab Runde 3 mit.
+            Die Bilanz folgt der Musterlösung des Spiels. Ab Runde 3 verändern die Fälle die Bilanz
+            Runde für Runde.
           </p>
         </Card>
       </div>

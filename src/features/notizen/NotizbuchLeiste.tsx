@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { Seitenleiste } from '../../components/Seitenleiste';
 import { useSpielstand } from '../../store/spielstand';
 import { useUi } from '../../store/uiStore';
-import { lektionen } from '../../content';
+import { sichtbareLektionen } from '../../content';
 import type { RundenId } from '../../content/typen';
 import { useState, useEffect } from 'react';
 
@@ -17,9 +17,11 @@ export function NotizbuchLeiste() {
   const schliesseLeisten = useUi((s) => s.schliesseLeisten);
   const notizen = useSpielstand((s) => s.notizen);
   const setzeNotiz = useSpielstand((s) => s.setzeNotiz);
+  const istTrainer = useSpielstand((s) => s.istTrainer);
   const location = useLocation();
 
-  const aktuelleRunde = rundeAusPfad(location.pathname) ?? lektionen[0]?.id ?? 'R0';
+  const lektionen = sichtbareLektionen(istTrainer);
+  const aktuelleRunde = rundeAusPfad(location.pathname) ?? lektionen[0]?.id ?? 'R1';
   const [gewaehlteRunde, setGewaehlteRunde] = useState<RundenId>(aktuelleRunde);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function NotizbuchLeiste() {
       >
         {lektionen.map((l) => (
           <option key={l.id} value={l.id}>
-            {l.id === 'R0' ? 'Probelauf' : `Runde ${l.id.slice(1)}: ${l.titel}`}
+            {l.nurTrainer ? `${l.id} ${l.titel} (nur Trainer)` : `Runde ${l.id.slice(1)}: ${l.titel}`}
           </option>
         ))}
       </select>

@@ -84,10 +84,14 @@ function leererRundenStand(status: RundenStatus): RundenStand {
 }
 
 function frischeRunden(): Record<RundenId, RundenStand> {
-  const erste = lektionen[0]?.id;
+  // Erste fuer Studierende sichtbare Runde startet offen. Nur-Trainer-Runden
+  // (Demo-Runde R0) sind ebenfalls offen, fuer Studierende aber unsichtbar.
+  const erste = lektionen.find((l) => !l.nurTrainer)?.id;
   const runden = {} as Record<RundenId, RundenStand>;
   for (const id of alleRundenIds) {
-    runden[id] = leererRundenStand(id === erste ? 'offen' : 'gesperrt');
+    const lektion = findeLektion(id);
+    const offen = id === erste || lektion?.nurTrainer === true;
+    runden[id] = leererRundenStand(offen ? 'offen' : 'gesperrt');
   }
   return runden;
 }
@@ -98,7 +102,7 @@ function leererFallStand(): FallStand {
 
 function anfangsZustand(): SpielStand {
   return {
-    version: 1,
+    version: 2,
     name: null,
     istTrainer: false,
     onboardingGesehen: false,
@@ -317,9 +321,19 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
     }),
     {
       name: 'alpenrad-v1',
-      version: 1,
-      // Migrationshaken fuer spaetere Spielstand-Versionen.
-      migrate: (persistedState) => persistedState as SpielStand & SpielAktionen,
+      version: 2,
+      // Migration alter Spielstaende. Version 1 (Phase 0): Das Spiel begann
+      // mit der Demo-Runde R0. Seit Version 2 startet R1 offen, R0 ist nur
+      // noch fuer den Trainer sichtbar. Bestehende R0-Daten bleiben erhalten.
+      migrate: (persistedState, version) => {
+        const stand = persistedState as SpielStand;
+        if (version < 2 && stand.runden) {
+          if (stand.runden.R1 && stand.runden.R1.status === 'gesperrt') {
+            stand.runden.R1 = { ...stand.runden.R1, status: 'offen' };
+          }
+        }
+        return stand as SpielStand & SpielAktionen;
+      },
     },
   ),
 );

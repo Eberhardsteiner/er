@@ -12,6 +12,9 @@ export interface Lektion {
   quiz: QuizFrage[]; // genau 10
   faelle: Fall[]; // 2 bis 5, Punktsumme aller Teilaufgaben = 80
   bilanzDelta?: BilanzDelta; // ab R3, R0 zu Testzwecken erlaubt
+  // Technische Erweiterung (Phase R1): Lektionen mit nurTrainer sind fuer
+  // Studierende unsichtbar und nur im Trainer-Modus erreichbar (Demo-Runde R0).
+  nurTrainer?: boolean;
 }
 
 export interface Kachel {

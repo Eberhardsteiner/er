@@ -181,7 +181,12 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion }) {
             <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
               {lektion.bilanzDelta.erlaeuterung}
             </p>
-          ) : null}
+          ) : (
+            <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+              In dieser Runde bleibt die Bilanz unverändert. Ab Runde 3 arbeiten Deine Fälle direkt
+              in der Bilanz.
+            </p>
+          )}
           <BilanzAnsicht bilanz={bilanz} hervorgehoben={hervorgehoben} />
         </Card>
       </section>

@@ -37,7 +37,7 @@ export function TrainerSeite() {
           spalten={['Runde', 'Kennwort']}
           zeilen={[
             ...alleRundenIds.map((id) => [
-              id === 'R0' ? 'Probelauf (R0)' : `Runde ${id.slice(1)}`,
+              id === 'R0' ? 'R0 Probelauf (nur Trainer)' : `Runde ${id.slice(1)}`,
               <code key={id} className="rounded bg-petrol-100 px-2 py-0.5">
                 {kennwortFuerRunde(id)}
               </code>,
@@ -64,7 +64,8 @@ export function TrainerSeite() {
                   className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-400"
                 >
                   <span>
-                    {id === 'R0' ? 'Probelauf (R0)' : `Runde ${id.slice(1)}`}: Inhalt folgt
+                    {id === 'R0' ? 'R0 Probelauf (nur Trainer)' : `Runde ${id.slice(1)}`}: Inhalt
+                    folgt
                   </span>
                 </div>
               );
@@ -76,7 +77,9 @@ export function TrainerSeite() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 px-4 py-2 text-sm"
               >
                 <span className="font-medium text-petrol-900">
-                  {id === 'R0' ? 'Probelauf' : `Runde ${id.slice(1)}`}: {lektion.titel}
+                  {lektion.nurTrainer
+                    ? `${id} ${lektion.titel} (nur Trainer)`
+                    : `Runde ${id.slice(1)}: ${lektion.titel}`}
                   <span className="ml-2 text-xs font-normal text-gray-500">
                     Status: {stand.status}
                   </span>

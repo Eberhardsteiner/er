@@ -136,7 +136,7 @@ export function LektionSeite() {
   );
   const [stufe, setStufe] = useState<Stufe>(initialeStufe);
 
-  if (!lektion || !stand || stand.status === 'gesperrt') {
+  if (!lektion || !stand || stand.status === 'gesperrt' || (lektion.nurTrainer && !istTrainer)) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -149,7 +149,9 @@ export function LektionSeite() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-petrol-900">
-        {lektion.id === 'R0' ? 'Probelauf' : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`}
+        {lektion.nurTrainer
+          ? `${lektion.id} ${lektion.titel} (nur Trainer)`
+          : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`}
       </h1>
       <p className="mb-6 text-sm text-gray-600">{lektion.untertitel}</p>
 

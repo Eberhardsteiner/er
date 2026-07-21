@@ -3,9 +3,11 @@
 
 import type { Bilanz, Lektion, RundenId } from './typen';
 import { lektionR0 } from './lektionen/R0-demo';
+import { lektionR1 } from './lektionen/R1-grundlagen';
 
-// Lektionen in Spielreihenfolge. Phase 0 enthaelt nur die Demo-Runde R0.
-export const lektionen: Lektion[] = [lektionR0];
+// Lektionen in Spielreihenfolge. R0 ist die Demo-Runde und nur noch im
+// Trainer-Modus sichtbar, fuer Studierende beginnt das Spiel mit R1.
+export const lektionen: Lektion[] = [{ ...lektionR0, nurTrainer: true }, lektionR1];
 
 // Alle Rundenplaetze in Spielreihenfolge, auch die noch nicht befuellten.
 export const alleRundenIds: RundenId[] = ['R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7'];
@@ -14,24 +16,43 @@ export function findeLektion(id: RundenId): Lektion | undefined {
   return lektionen.find((l) => l.id === id);
 }
 
-// Startbilanz Phase 0 (Demo-Bilanz).
+// Lektionen, die Studierende sehen (Trainer sehen alle).
+export function sichtbareLektionen(istTrainer: boolean): Lektion[] {
+  return lektionen.filter((l) => istTrainer || !l.nurTrainer);
+}
+
+// Titel der noch nicht befuellten Runden laut Produktionsplan.
+export const platzhalterTitel: Partial<Record<RundenId, string>> = {
+  R2: 'Grundsätze ordnungsmäßiger Buchführung',
+  R3: 'Bilanzierung dem Grunde nach',
+  R4: 'Bewertung',
+  R5: 'Anlagevermögen',
+  R6: 'Umlaufvermögen',
+  R7: 'Rückstellungen',
+};
+
+// Gruendungsbilanz der AlpenRad GmbH als Startbilanz.
 export const startBilanz: Bilanz = {
-  stichtagLabel: 'Probelauf, Gründung',
+  stichtagLabel: 'Gründungsbilanz zum 1. Jänner',
   aktiva: [
     {
       name: 'Umlaufvermögen',
-      posten: [{ id: 'bank', name: 'Guthaben bei Kreditinstituten', betrag: 100000 }],
+      posten: [{ id: 'bank', name: 'Guthaben bei Kreditinstituten', betrag: 250000 }],
     },
   ],
   passiva: [
     {
       name: 'Eigenkapital',
-      posten: [{ id: 'stammkapital', name: 'Stammkapital', betrag: 35000 }],
+      posten: [{ id: 'stammkapital', name: 'Stammkapital', betrag: 100000 }],
     },
     {
       name: 'Verbindlichkeiten',
       posten: [
-        { id: 'bankdarlehen', name: 'Verbindlichkeiten gegenüber Kreditinstituten', betrag: 65000 },
+        {
+          id: 'bankdarlehen',
+          name: 'Verbindlichkeiten gegenüber Kreditinstituten',
+          betrag: 150000,
+        },
       ],
     },
   ],

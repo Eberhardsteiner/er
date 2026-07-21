@@ -20,18 +20,18 @@ describe('wendeDeltaAn', () => {
     // Neue Gruppe Anlagevermoegen vor dem Umlaufvermoegen
     expect(neu.aktiva[0].name).toBe('Anlagevermögen');
     expect(neu.aktiva[0].posten[0]).toMatchObject({ id: 'bga', betrag: 882 });
-    // Bank um 882 reduziert
+    // Bank um 882 reduziert (Gruendungsbilanz: 250.000)
     const bank = neu.aktiva[1].posten.find((p) => p.id === 'bank');
-    expect(bank?.betrag).toBe(99118);
+    expect(bank?.betrag).toBe(249118);
     // Invariante haelt
     expect(() => pruefeBilanz(neu)).not.toThrow();
-    expect(summeSeite(neu.aktiva)).toBe(100000);
+    expect(summeSeite(neu.aktiva)).toBe(250000);
   });
 
   it('veraendert die Ausgangsbilanz nicht', () => {
     const delta = lektionR0.bilanzDelta as BilanzDelta;
     wendeDeltaAn(startBilanz, delta);
-    expect(startBilanz.aktiva[0].posten[0].betrag).toBe(100000);
+    expect(startBilanz.aktiva[0].posten[0].betrag).toBe(250000);
     expect(startBilanz.aktiva.length).toBe(1);
   });
 
@@ -56,8 +56,8 @@ describe('wendeDeltaAn', () => {
         },
       ],
       aenderungen: [
-        { postenId: 'bankdarlehen', delta: -65000 },
-        { postenId: 'llVerb', delta: 65000 },
+        { postenId: 'bankdarlehen', delta: -150000 },
+        { postenId: 'llVerb', delta: 150000 },
       ],
     };
     const neu = wendeDeltaAn(startBilanz, delta);

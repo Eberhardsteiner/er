@@ -27,8 +27,11 @@ export function StartSeite() {
   const [trainerFehler, setTrainerFehler] = useState('');
   const [neustartWarnung, setNeustartWarnung] = useState(false);
 
-  const ausgewertet = lektionen.filter((l) => runden[l.id].status === 'ausgewertet').length;
-  const punkteBisher = lektionen.reduce((s, l) => s + rundenPunkte(runden[l.id]), 0);
+  const spielbareLektionen = lektionen.filter((l) => !l.nurTrainer);
+  const ausgewertet = spielbareLektionen.filter(
+    (l) => runden[l.id].status === 'ausgewertet',
+  ).length;
+  const punkteBisher = spielbareLektionen.reduce((s, l) => s + rundenPunkte(runden[l.id]), 0);
 
   function nameGueltig(): boolean {
     if (name.trim().length < 3) {
@@ -84,8 +87,10 @@ export function StartSeite() {
           Ein Planspiel zum Jahresabschluss nach UGB
         </p>
         <p className="mt-4 text-center text-sm text-gray-700">
-          Willkommen beim Planspiel AlpenRad. Hier erarbeitest Du Schritt für Schritt den
-          Jahresabschluss nach UGB.
+          Willkommen bei AlpenRad, dem Bilanz-Planspiel. Du startest als neue Assistenz der
+          kaufmännischen Leitung der AlpenRad GmbH, einer jungen E-Bike-Manufaktur in Graz. Sieben
+          Runden führen Dich durch das erste Geschäftsjahr bis zum fertigen Jahresabschluss nach
+          österreichischem UGB. Deine Mentorin Mag. Sophie Huber begleitet Dich dabei.
         </p>
 
         <Card className="mt-8">
@@ -101,8 +106,8 @@ export function StartSeite() {
             <Button onClick={beiNeuesSpiel}>Neues Spiel starten</Button>
             {gespeicherterName ? (
               <Button variante="sekundaer" onClick={() => navigate('/dashboard')}>
-                Fortsetzen als {gespeicherterName} ({ausgewertet} von {lektionen.length} Runden
-                ausgewertet, {punkteBisher} Punkte)
+                Fortsetzen als {gespeicherterName} ({ausgewertet} von {spielbareLektionen.length}{' '}
+                Runden ausgewertet, {punkteBisher} Punkte)
               </Button>
             ) : null}
             <Button variante="sekundaer" onClick={() => setSprungOffen(true)}>

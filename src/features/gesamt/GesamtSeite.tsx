@@ -57,18 +57,18 @@ export function GesamtSeite() {
         <Tabelle
           beschriftung="Punkte je Runde"
           spalten={['Runde', 'Quiz', 'Fälle', 'Gesamt', 'Vermerk']}
-          zeilen={lektionen.map((lektion) => {
-            const stand = runden[lektion.id];
-            return [
-              lektion.id === 'R0'
-                ? `Probelauf: ${lektion.titel} (zählt nicht zur Gesamtwertung)`
-                : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`,
-              stand.punkteQuiz,
-              stand.punkteFaelle,
-              rundenPunkte(stand),
-              stand.uebersprungen ? 'übersprungen' : '',
-            ];
-          })}
+          zeilen={lektionen
+            .filter((lektion) => !lektion.nurTrainer)
+            .map((lektion) => {
+              const stand = runden[lektion.id];
+              return [
+                `Runde ${lektion.id.slice(1)}: ${lektion.titel}`,
+                stand.punkteQuiz,
+                stand.punkteFaelle,
+                rundenPunkte(stand),
+                stand.uebersprungen ? 'übersprungen' : '',
+              ];
+            })}
         />
       </Card>
 

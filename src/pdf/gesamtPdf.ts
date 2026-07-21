@@ -45,20 +45,18 @@ export function erzeugeGesamtPdf(
     startY: y,
     margin: { left: SEITENRAND, right: SEITENRAND },
     head: [['Runde', 'Quiz', 'Fälle', 'Gesamt', 'Vermerk']],
-    body: lektionen.map((lektion) => {
-      const stand = runden[lektion.id];
-      const label =
-        lektion.id === 'R0'
-          ? `Probelauf: ${lektion.titel} (zählt nicht zur Gesamtwertung)`
-          : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`;
-      return [
-        label,
-        String(stand.punkteQuiz),
-        String(stand.punkteFaelle),
-        String(stand.punkteQuiz + stand.punkteFaelle),
-        stand.uebersprungen ? 'übersprungen' : '',
-      ];
-    }),
+    body: lektionen
+      .filter((lektion) => !lektion.nurTrainer)
+      .map((lektion) => {
+        const stand = runden[lektion.id];
+        return [
+          `Runde ${lektion.id.slice(1)}: ${lektion.titel}`,
+          String(stand.punkteQuiz),
+          String(stand.punkteFaelle),
+          String(stand.punkteQuiz + stand.punkteFaelle),
+          stand.uebersprungen ? 'übersprungen' : '',
+        ];
+      }),
     styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
     headStyles: { fillColor: PETROL, textColor: [255, 255, 255] },
     columnStyles: {
