@@ -34,10 +34,23 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Steirische Landesbank.
 - Steira Components AG: fiktive börsennotierte AG für Wertpapier-Übungsszenarien.
 
-## Übungsszenarien und Musterbilanz
+## Bilanzwirkung der Fälle
 
 - Die Fallszenarien der Runden 1 und 2 sind Übungsszenarien ohne Wirkung auf die
   Musterbilanz. Bilanzwirksame Geschäftsfälle beginnen mit Runde 3.
+- Runde 3 bucht vier Geschäftsfälle in die Musterbilanz: Montagelinie 120.000
+  (Banküberweisung), CAD-Softwarelizenz 15.000 (Banküberweisung), Vorratsaufbau
+  60.000 (auf Ziel, Verbindlichkeiten aus Lieferungen und Leistungen),
+  Entwicklungsaufwand E-Antrieb 20.000 (Banküberweisung, Aufwand wegen
+  § 197 Abs 2 UGB).
+- Musterbilanz nach Runde 3: Bilanzsumme 290.000. Aktiva: Immaterielle
+  Vermögensgegenstände 15.000, Technische Anlagen und Maschinen 120.000,
+  Vorräte 60.000, Guthaben bei Kreditinstituten 95.000. Passiva: Stammkapital
+  100.000, Bilanzgewinn/Bilanzverlust minus 20.000, Verbindlichkeiten gegenüber
+  Kreditinstituten 150.000, Verbindlichkeiten aus Lieferungen und Leistungen
+  60.000.
+- Der geplante Kauf der Werkzeugsätze (je 750 Euro) und alle Beurteilungsfragen
+  ohne Betragsbuchung bleiben in Runde 3 ohne Bilanzwirkung.
 
 ## Rechtsquellenprinzip
 
