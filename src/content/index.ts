@@ -1,7 +1,7 @@
 // Zentraler Einstiegspunkt fuer alle Inhalte.
 // Spaetere Phasen ergaenzen hier nur weitere Lektionen, ohne Komponenten anzufassen.
 
-import type { Bilanz, Lektion, RundenId } from './typen';
+import type { Bilanz, Lektion, ModulId, RundenId, SpielId, Zusatzmodul } from './typen';
 import { lektionR0 } from './lektionen/R0-demo';
 import { lektionR1 } from './lektionen/R1-grundlagen';
 import { lektionR2 } from './lektionen/R2-gob';
@@ -10,6 +10,10 @@ import { lektionR4 } from './lektionen/R4-bewertung';
 import { lektionR5 } from './lektionen/R5-anlagevermoegen';
 import { lektionR6 } from './lektionen/R6-umlaufvermoegen';
 import { lektionR7 } from './lektionen/R7-rueckstellungen';
+import { modulZ1 } from './module/Z1-eigenkapital';
+import { modulZ2 } from './module/Z2-verbindlichkeiten';
+import { modulZ3 } from './module/Z3-rap';
+import { modulZ4 } from './module/Z4-guv';
 
 // Lektionen in Spielreihenfolge. R0 ist die Demo-Runde und nur noch im
 // Trainer-Modus sichtbar, fuer Studierende beginnt das Spiel mit R1.
@@ -29,6 +33,20 @@ export const alleRundenIds: RundenId[] = ['R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R
 
 export function findeLektion(id: RundenId): Lektion | undefined {
   return lektionen.find((l) => l.id === id);
+}
+
+// Trainerfreischaltbare Zusatzmodule in Anzeige-Reihenfolge (Phase Z0).
+export const zusatzmodule: Zusatzmodul[] = [modulZ1, modulZ2, modulZ3, modulZ4];
+
+export const alleModulIds: ModulId[] = ['Z1', 'Z2', 'Z3', 'Z4'];
+
+export function findeModul(id: ModulId): Zusatzmodul | undefined {
+  return zusatzmodule.find((m) => m.id === id);
+}
+
+// Einheitlicher Zugriff fuer Kernrunden und Zusatzmodule.
+export function findeEinheit(id: SpielId): Lektion | Zusatzmodul | undefined {
+  return id.startsWith('Z') ? findeModul(id as ModulId) : findeLektion(id as RundenId);
 }
 
 // Lektionen, die Studierende sehen (Trainer sehen alle).

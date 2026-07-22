@@ -1,7 +1,13 @@
 import { Navigate } from 'react-router-dom';
 import { Download, Mail } from 'lucide-react';
-import { lektionen } from '../../content';
-import { gesamtPunkte, schlussBilanz } from '../../engine/ableitung';
+import { lektionen, zusatzmodule } from '../../content';
+import {
+  anzahlGespielteModule,
+  gesamtPunkte,
+  maxZusatzPunkte,
+  schlussBilanz,
+  zusatzPunkte,
+} from '../../engine/ableitung';
 import { ermittleRang, MAX_PUNKTE_GESAMT } from '../../engine/scoring';
 import { rundenPunkte, useSpielstand } from '../../store/spielstand';
 import { BilanzAnsicht } from '../../components/BilanzAnsicht';
@@ -18,6 +24,7 @@ export function GesamtSeite() {
   const name = useSpielstand((s) => s.name);
   const istTrainer = useSpielstand((s) => s.istTrainer);
   const runden = useSpielstand((s) => s.runden);
+  const module = useSpielstand((s) => s.module);
 
   if (!istTrainer && runden.R7.status !== 'ausgewertet') {
     return <Navigate to="/dashboard" replace />;
@@ -26,6 +33,9 @@ export function GesamtSeite() {
   const gesamt = gesamtPunkte(runden);
   const bilanz = schlussBilanz();
   const rang = ermittleRang(gesamt);
+  // Zusatzmodule: eigener Block nur, wenn mindestens ein Modul ausgewertet ist.
+  // Der Rang berechnet sich unveraendert nur aus den 700 Kernpunkten.
+  const gespielteModule = anzahlGespielteModule(module);
 
   const mailto = `mailto:${EMPFAENGER}?subject=${encodeURIComponent(
     `Planspiel AlpenRad: Gesamtauswertung ${name ?? ''}`,
@@ -72,6 +82,31 @@ export function GesamtSeite() {
         />
       </Card>
 
+      {gespielteModule > 0 ? (
+        <Card className="mt-6">
+          <h2 className="mb-3 font-semibold text-petrol-900">Zusatzmodule</h2>
+          <Tabelle
+            beschriftung="Punkte je Zusatzmodul"
+            spalten={['Modul', 'Quiz', 'Fälle', 'Gesamt']}
+            zeilen={zusatzmodule
+              .filter((m) => module[m.id]?.status === 'ausgewertet')
+              .map((m) => {
+                const stand = module[m.id];
+                return [
+                  `Modul ${m.id}: ${m.titel}`,
+                  stand?.punkteQuiz ?? 0,
+                  stand?.punkteFaelle ?? 0,
+                  stand ? rundenPunkte(stand) : 0,
+                ];
+              })}
+          />
+          <p className="mt-3 text-sm text-gray-700">
+            Zusatzpunkte: {zusatzPunkte(module)} von {maxZusatzPunkte()}, {gespielteModule} von 4
+            Modulen gespielt. Die Zusatzpunkte fließen nicht in den Rang ein.
+          </p>
+        </Card>
+      ) : null}
+
       <Card className="mt-6">
         <h2 className="mb-3 font-semibold text-petrol-900">Schlussbilanz</h2>
         <BilanzAnsicht bilanz={bilanz} />
@@ -87,7 +122,7 @@ export function GesamtSeite() {
           onClick={() => {
             // PDF-Modul erst bei Bedarf laden, haelt den Start der App schlank.
             void import('../../pdf/gesamtPdf').then((m) =>
-              m.erzeugeGesamtPdf(name ?? '', runden, gesamt, bilanz),
+              m.erzeugeGesamtPdf(name ?? '', runden, gesamt, bilanz, module),
             );
           }}
         >

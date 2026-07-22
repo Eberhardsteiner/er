@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import type { Fall, Lektion, Teilaufgabe } from '../../content/typen';
+import type { Fall, Lektion, SpielId, Teilaufgabe, Zusatzmodul } from '../../content/typen';
 import { kennwortGateAktiv } from '../../engine/gates';
-import { pruefeKennwort } from '../../engine/kennwort';
-import { useSpielstand, rundenPunkte } from '../../store/spielstand';
+import { pruefeEinheitKennwort } from '../../engine/kennwort';
+import { holeStand, useSpielstand, rundenPunkte } from '../../store/spielstand';
 import { useUi } from '../../store/uiStore';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
@@ -17,13 +17,13 @@ function TeilaufgabeFeld({
   teilaufgabe,
   gesperrt,
 }: {
-  lektionId: Lektion['id'];
+  lektionId: SpielId;
   fall: Fall;
   teilaufgabe: Teilaufgabe;
   gesperrt: boolean;
 }) {
   const eingabe = useSpielstand(
-    (s) => s.runden[lektionId].fallStaende[fall.id]?.eingaben[teilaufgabe.id] ?? null,
+    (s) => holeStand(s, lektionId)?.fallStaende[fall.id]?.eingaben[teilaufgabe.id] ?? null,
   );
   const setzeFallEingabe = useSpielstand((s) => s.setzeFallEingabe);
 
@@ -65,8 +65,8 @@ function TeilaufgabeFeld({
   );
 }
 
-function FallKarte({ lektion, fall }: { lektion: Lektion; fall: Fall }) {
-  const fallStand = useSpielstand((s) => s.runden[lektion.id].fallStaende[fall.id]);
+function FallKarte({ lektion, fall }: { lektion: Lektion | Zusatzmodul; fall: Fall }) {
+  const fallStand = useSpielstand((s) => holeStand(s, lektion.id)?.fallStaende[fall.id]);
   const nutzeHilfe = useSpielstand((s) => s.nutzeHilfe);
   const nutzeLoesung = useSpielstand((s) => s.nutzeLoesung);
   const gebeFallAb = useSpielstand((s) => s.gebeFallAb);
@@ -145,17 +145,20 @@ function KennwortGate({
   lektion,
   onZurAuswertung,
 }: {
-  lektion: Lektion;
+  lektion: Lektion | Zusatzmodul;
   onZurAuswertung: () => void;
 }) {
   const schalteAuswertungFrei = useSpielstand((s) => s.schalteAuswertungFrei);
-  const stand = useSpielstand((s) => s.runden[lektion.id]);
+  const stand = useSpielstand((s) => holeStand(s, lektion.id));
   const zeigeToast = useUi((s) => s.zeigeToast);
   const [kennwort, setKennwort] = useState('');
   const [fehler, setFehler] = useState('');
 
+  if (!stand) return null;
+
   function pruefen() {
-    if (pruefeKennwort(lektion.id, kennwort)) {
+    if (!stand) return;
+    if (pruefeEinheitKennwort(lektion.id, kennwort)) {
       schalteAuswertungFrei(lektion.id);
       zeigeToast(`Runde ausgewertet! Du hast ${rundenPunkte(stand)} von 100 Punkten erreicht.`);
       onZurAuswertung();
@@ -198,10 +201,12 @@ export function FaelleAnsicht({
   lektion,
   onZurAuswertung,
 }: {
-  lektion: Lektion;
+  lektion: Lektion | Zusatzmodul;
   onZurAuswertung: () => void;
 }) {
-  const stand = useSpielstand((s) => s.runden[lektion.id]);
+  const stand = useSpielstand((s) => holeStand(s, lektion.id));
+
+  if (!stand) return null;
 
   return (
     <div className="flex flex-col gap-6">

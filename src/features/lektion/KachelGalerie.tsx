@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { BookOpenCheck, BookOpen } from 'lucide-react';
-import type { Kachel, KachelBlock, Lektion } from '../../content/typen';
+import type { Kachel, KachelBlock, Lektion, Zusatzmodul } from '../../content/typen';
 import { alleKachelnGelesen, darfQuizStarten } from '../../engine/gates';
-import { useSpielstand } from '../../store/spielstand';
+import { holeStand, useSpielstand } from '../../store/spielstand';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { Modal } from '../../components/Modal';
@@ -44,13 +44,15 @@ export function KachelGalerie({
   lektion,
   onZumQuiz,
 }: {
-  lektion: Lektion;
+  lektion: Lektion | Zusatzmodul;
   onZumQuiz: () => void;
 }) {
-  const stand = useSpielstand((s) => s.runden[lektion.id]);
+  const stand = useSpielstand((s) => holeStand(s, lektion.id));
   const istTrainer = useSpielstand((s) => s.istTrainer);
   const markiereKachelGelesen = useSpielstand((s) => s.markiereKachelGelesen);
   const [offeneKachel, setOffeneKachel] = useState<Kachel | null>(null);
+
+  if (!stand) return null;
 
   const alleGelesen = alleKachelnGelesen(lektion, stand);
   const quizErlaubt = darfQuizStarten(lektion, stand, istTrainer) || stand.status !== 'offen';

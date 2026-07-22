@@ -2,11 +2,15 @@
 // localStorage laeuft ausschliesslich ueber diese Persistenzschicht,
 // Schluessel "alpenrad-v1". Jede Zustandsaenderung laeuft ueber Aktionen,
 // Komponenten rufen niemals direkt set auf.
+//
+// Seit Phase Z0 gelten die Spielaktionen einheitlich fuer Kernrunden (R0 bis
+// R7) und Zusatzmodule (Z1 bis Z4). Runden liegen in `runden`, Modulstaende
+// in `module`, die Freischaltung in `freigeschalteteModule`.
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { alleRundenIds, findeLektion, lektionen } from '../content';
-import type { RundenId } from '../content/typen';
+import { alleRundenIds, findeEinheit, findeLektion, lektionen } from '../content';
+import type { ModulId, RundenId, SpielId } from '../content/typen';
 import { punkteFall, punkteQuiz } from '../engine/scoring';
 
 export type RundenStatus =
@@ -38,36 +42,47 @@ export interface RundenStand {
   quizUebersprungen: boolean;
 }
 
+// Modulstaende sind strukturgleich zu Rundenstaenden.
+export type ModulStand = RundenStand;
+
 export interface SpielStand {
   version: number;
   name: string | null;
   istTrainer: boolean;
   onboardingGesehen: boolean;
   runden: Record<RundenId, RundenStand>;
-  notizen: Partial<Record<RundenId, string>>;
+  module: Partial<Record<ModulId, ModulStand>>;
+  freigeschalteteModule: ModulId[];
+  notizen: Partial<Record<SpielId, string>>;
 }
 
 export interface SpielAktionen {
   neuesSpiel: (name: string) => void;
   setzeTrainer: (aktiv: boolean) => void;
   onboardingAbschliessen: () => void;
-  markiereKachelGelesen: (runde: RundenId, kachelId: string) => void;
-  setzeQuizAntwort: (runde: RundenId, frageIndex: number, antwort: number) => void;
-  gebeQuizAb: (runde: RundenId) => void;
+  markiereKachelGelesen: (einheit: SpielId, kachelId: string) => void;
+  setzeQuizAntwort: (einheit: SpielId, frageIndex: number, antwort: number) => void;
+  gebeQuizAb: (einheit: SpielId) => void;
   setzeFallEingabe: (
-    runde: RundenId,
+    einheit: SpielId,
     fallId: string,
     teilaufgabeId: string,
     wert: string | number | null,
   ) => void;
-  nutzeHilfe: (runde: RundenId, fallId: string) => void;
-  nutzeLoesung: (runde: RundenId, fallId: string) => void;
-  gebeFallAb: (runde: RundenId, fallId: string) => void;
-  schalteAuswertungFrei: (runde: RundenId) => void;
+  nutzeHilfe: (einheit: SpielId, fallId: string) => void;
+  nutzeLoesung: (einheit: SpielId, fallId: string) => void;
+  gebeFallAb: (einheit: SpielId, fallId: string) => void;
+  schalteAuswertungFrei: (einheit: SpielId) => void;
   springeZuRunde: (ziel: RundenId, name: string) => void;
-  direktZuFaellen: (runde: RundenId) => void;
-  setzeNotiz: (runde: RundenId, text: string) => void;
+  direktZuFaellen: (einheit: SpielId) => void;
+  setzeNotiz: (einheit: SpielId, text: string) => void;
+  schalteModulFrei: (modul: ModulId) => void;
+  deaktiviereModul: (modul: ModulId) => void;
   spielZuruecksetzen: () => void;
+}
+
+export function istModulId(id: SpielId): id is ModulId {
+  return id.startsWith('Z');
 }
 
 function leererRundenStand(status: RundenStatus): RundenStand {
@@ -102,11 +117,13 @@ function leererFallStand(): FallStand {
 
 function anfangsZustand(): SpielStand {
   return {
-    version: 3,
+    version: 4,
     name: null,
     istTrainer: false,
     onboardingGesehen: false,
     runden: frischeRunden(),
+    module: {},
+    freigeschalteteModule: [],
     notizen: {},
   };
 }
@@ -118,6 +135,39 @@ function naechsteVorhandeneRunde(nach: RundenId): RundenId | undefined {
     if (findeLektion(alleRundenIds[i])) return alleRundenIds[i];
   }
   return undefined;
+}
+
+// Einheitlicher Zugriff auf Runden- und Modulstaende.
+export function holeStand(s: SpielStand, id: SpielId): RundenStand | undefined {
+  return istModulId(id) ? s.module[id] : s.runden[id];
+}
+
+function schreibeStand(s: SpielStand, id: SpielId, stand: RundenStand): Partial<SpielStand> {
+  return istModulId(id)
+    ? { module: { ...s.module, [id]: stand } }
+    : { runden: { ...s.runden, [id]: stand } };
+}
+
+// Migration alter Spielstaende, exportiert fuer Tests.
+// Version 1 (Phase 0): Das Spiel begann mit der Demo-Runde R0. Seit Version 2
+// startet R1 offen, R0 ist nur noch fuer den Trainer sichtbar.
+// Version 3: Antwortreihenfolgen wurden gleichverteilt umsortiert, Punkte
+// abgegebener Runden blieben bewusst unveraendert.
+// Version 4 (Phase Z0): Zusatzmodule. Bestehende Staende erhalten leere
+// Modulfelder, alles andere bleibt erhalten.
+export function migriereSpielstand(persistedState: unknown, version: number): SpielStand {
+  const stand = persistedState as SpielStand;
+  if (version < 2 && stand.runden) {
+    if (stand.runden.R1 && stand.runden.R1.status === 'gesperrt') {
+      stand.runden.R1 = { ...stand.runden.R1, status: 'offen' };
+    }
+  }
+  if (version < 4) {
+    if (!stand.module) stand.module = {};
+    if (!stand.freigeschalteteModule) stand.freigeschalteteModule = [];
+    if (!stand.notizen) stand.notizen = {};
+  }
+  return stand;
 }
 
 export const useSpielstand = create<SpielStand & SpielAktionen>()(
@@ -132,107 +182,85 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
 
       onboardingAbschliessen: () => set({ onboardingGesehen: true }),
 
-      markiereKachelGelesen: (runde, kachelId) =>
+      markiereKachelGelesen: (einheit, kachelId) =>
         set((s) => {
-          const stand = s.runden[runde];
-          if (stand.kachelnGelesen.includes(kachelId)) return s;
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: { ...stand, kachelnGelesen: [...stand.kachelnGelesen, kachelId] },
-            },
-          };
+          const stand = holeStand(s, einheit);
+          if (!stand || stand.kachelnGelesen.includes(kachelId)) return s;
+          return schreibeStand(s, einheit, {
+            ...stand,
+            kachelnGelesen: [...stand.kachelnGelesen, kachelId],
+          });
         }),
 
-      setzeQuizAntwort: (runde, frageIndex, antwort) =>
+      setzeQuizAntwort: (einheit, frageIndex, antwort) =>
         set((s) => {
-          const stand = s.runden[runde];
-          if (stand.status !== 'offen') return s;
-          const lektion = findeLektion(runde);
-          if (!lektion) return s;
+          const stand = holeStand(s, einheit);
+          const inhalt = findeEinheit(einheit);
+          if (!stand || !inhalt || stand.status !== 'offen') return s;
           const antworten = [...stand.quizAntworten];
-          while (antworten.length < lektion.quiz.length) antworten.push(null);
+          while (antworten.length < inhalt.quiz.length) antworten.push(null);
           antworten[frageIndex] = antwort;
-          return {
-            runden: { ...s.runden, [runde]: { ...stand, quizAntworten: antworten } },
-          };
+          return schreibeStand(s, einheit, { ...stand, quizAntworten: antworten });
         }),
 
-      gebeQuizAb: (runde) =>
+      gebeQuizAb: (einheit) =>
         set((s) => {
-          const stand = s.runden[runde];
-          const lektion = findeLektion(runde);
-          if (!lektion || stand.status !== 'offen') return s;
+          const stand = holeStand(s, einheit);
+          const inhalt = findeEinheit(einheit);
+          if (!stand || !inhalt || stand.status !== 'offen') return s;
           const antworten = [...stand.quizAntworten];
-          while (antworten.length < lektion.quiz.length) antworten.push(null);
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                quizAntworten: antworten,
-                status: 'quizAbgegeben',
-                punkteQuiz: punkteQuiz(lektion.quiz, antworten),
-              },
-            },
-          };
+          while (antworten.length < inhalt.quiz.length) antworten.push(null);
+          return schreibeStand(s, einheit, {
+            ...stand,
+            quizAntworten: antworten,
+            status: 'quizAbgegeben',
+            punkteQuiz: punkteQuiz(inhalt.quiz, antworten),
+          });
         }),
 
-      setzeFallEingabe: (runde, fallId, teilaufgabeId, wert) =>
+      setzeFallEingabe: (einheit, fallId, teilaufgabeId, wert) =>
         set((s) => {
-          const stand = s.runden[runde];
+          const stand = holeStand(s, einheit);
+          if (!stand) return s;
           const fall = stand.fallStaende[fallId] ?? leererFallStand();
           if (fall.abgegeben) return s;
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                fallStaende: {
-                  ...stand.fallStaende,
-                  [fallId]: { ...fall, eingaben: { ...fall.eingaben, [teilaufgabeId]: wert } },
-                },
-              },
+          return schreibeStand(s, einheit, {
+            ...stand,
+            fallStaende: {
+              ...stand.fallStaende,
+              [fallId]: { ...fall, eingaben: { ...fall.eingaben, [teilaufgabeId]: wert } },
             },
-          };
+          });
         }),
 
-      nutzeHilfe: (runde, fallId) =>
+      nutzeHilfe: (einheit, fallId) =>
         set((s) => {
-          const stand = s.runden[runde];
+          const stand = holeStand(s, einheit);
+          if (!stand) return s;
           const fall = stand.fallStaende[fallId] ?? leererFallStand();
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                fallStaende: { ...stand.fallStaende, [fallId]: { ...fall, hilfeGenutzt: true } },
-              },
-            },
-          };
+          return schreibeStand(s, einheit, {
+            ...stand,
+            fallStaende: { ...stand.fallStaende, [fallId]: { ...fall, hilfeGenutzt: true } },
+          });
         }),
 
-      nutzeLoesung: (runde, fallId) =>
+      nutzeLoesung: (einheit, fallId) =>
         set((s) => {
-          const stand = s.runden[runde];
+          const stand = holeStand(s, einheit);
+          if (!stand) return s;
           const fall = stand.fallStaende[fallId] ?? leererFallStand();
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                fallStaende: { ...stand.fallStaende, [fallId]: { ...fall, loesungGenutzt: true } },
-              },
-            },
-          };
+          return schreibeStand(s, einheit, {
+            ...stand,
+            fallStaende: { ...stand.fallStaende, [fallId]: { ...fall, loesungGenutzt: true } },
+          });
         }),
 
-      gebeFallAb: (runde, fallId) =>
+      gebeFallAb: (einheit, fallId) =>
         set((s) => {
-          const stand = s.runden[runde];
-          const lektion = findeLektion(runde);
-          const fallDaten = lektion?.faelle.find((f) => f.id === fallId);
-          if (!lektion || !fallDaten) return s;
+          const stand = holeStand(s, einheit);
+          const inhalt = findeEinheit(einheit);
+          const fallDaten = inhalt?.faelle.find((f) => f.id === fallId);
+          if (!stand || !inhalt || !fallDaten) return s;
           const fall = stand.fallStaende[fallId] ?? leererFallStand();
           if (fall.abgegeben) return s;
           const punkte = punkteFall(fallDaten, fall.eingaben, fall.hilfeGenutzt, fall.loesungGenutzt);
@@ -240,36 +268,35 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
             ...stand.fallStaende,
             [fallId]: { ...fall, abgegeben: true, punkte },
           };
-          const alleAbgegeben = lektion.faelle.every((f) => fallStaende[f.id]?.abgegeben === true);
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                fallStaende,
-                status: alleAbgegeben ? 'faelleAbgegeben' : stand.status,
-                punkteFaelle: lektion.faelle.reduce(
-                  (summe, f) => summe + (fallStaende[f.id]?.punkte ?? 0),
-                  0,
-                ),
-              },
-            },
-          };
+          const alleAbgegeben = inhalt.faelle.every((f) => fallStaende[f.id]?.abgegeben === true);
+          return schreibeStand(s, einheit, {
+            ...stand,
+            fallStaende,
+            status: alleAbgegeben ? 'faelleAbgegeben' : stand.status,
+            punkteFaelle: inhalt.faelle.reduce(
+              (summe, f) => summe + (fallStaende[f.id]?.punkte ?? 0),
+              0,
+            ),
+          });
         }),
 
-      schalteAuswertungFrei: (runde) =>
+      schalteAuswertungFrei: (einheit) =>
         set((s) => {
-          const stand = s.runden[runde];
-          if (stand.status !== 'faelleAbgegeben') return s;
-          const runden = {
-            ...s.runden,
-            [runde]: { ...stand, status: 'ausgewertet' as RundenStatus },
-          };
-          const folge = naechsteVorhandeneRunde(runde);
-          if (folge && runden[folge].status === 'gesperrt') {
-            runden[folge] = { ...runden[folge], status: 'offen' };
+          const stand = holeStand(s, einheit);
+          if (!stand || stand.status !== 'faelleAbgegeben') return s;
+          const neu = schreibeStand(s, einheit, {
+            ...stand,
+            status: 'ausgewertet' as RundenStatus,
+          });
+          // Nur Kernrunden schalten eine Folgerunde frei.
+          if (!istModulId(einheit)) {
+            const runden = (neu.runden ?? s.runden) as Record<RundenId, RundenStand>;
+            const folge = naechsteVorhandeneRunde(einheit);
+            if (folge && runden[folge].status === 'gesperrt') {
+              neu.runden = { ...runden, [folge]: { ...runden[folge], status: 'offen' } };
+            }
           }
-          return { runden };
+          return neu;
         }),
 
       springeZuRunde: (ziel, name) =>
@@ -293,57 +320,54 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
           };
         }),
 
-      direktZuFaellen: (runde) =>
+      direktZuFaellen: (einheit) =>
         set((s) => {
           if (!s.istTrainer) return s;
-          const stand = s.runden[runde];
-          const lektion = findeLektion(runde);
-          if (!lektion) return s;
+          const stand = holeStand(s, einheit);
+          const inhalt = findeEinheit(einheit);
+          if (!stand || !inhalt) return s;
           if (stand.status !== 'gesperrt' && stand.status !== 'offen') return s;
-          return {
-            runden: {
-              ...s.runden,
-              [runde]: {
-                ...stand,
-                status: 'quizAbgegeben',
-                quizAntworten: lektion.quiz.map(() => null),
-                punkteQuiz: 0,
-                quizUebersprungen: true,
-              },
-            },
-          };
+          return schreibeStand(s, einheit, {
+            ...stand,
+            status: 'quizAbgegeben',
+            quizAntworten: inhalt.quiz.map(() => null),
+            punkteQuiz: 0,
+            quizUebersprungen: true,
+          });
         }),
 
-      setzeNotiz: (runde, text) =>
-        set((s) => ({ notizen: { ...s.notizen, [runde]: text } })),
+      setzeNotiz: (einheit, text) =>
+        set((s) => ({ notizen: { ...s.notizen, [einheit]: text } })),
+
+      schalteModulFrei: (modul) =>
+        set((s) => ({
+          freigeschalteteModule: s.freigeschalteteModule.includes(modul)
+            ? s.freigeschalteteModule
+            : [...s.freigeschalteteModule, modul],
+          module: s.module[modul] ? s.module : { ...s.module, [modul]: leererRundenStand('offen') },
+        })),
+
+      deaktiviereModul: (modul) =>
+        set((s) => {
+          if (!s.istTrainer) return s;
+          // Der Modulstand bleibt erhalten, nur die Freischaltung faellt weg.
+          return {
+            freigeschalteteModule: s.freigeschalteteModule.filter((m) => m !== modul),
+          };
+        }),
 
       spielZuruecksetzen: () => set({ ...anfangsZustand() }),
     }),
     {
       name: 'alpenrad-v1',
-      version: 3,
-      // Migration alter Spielstaende. Version 1 (Phase 0): Das Spiel begann
-      // mit der Demo-Runde R0. Seit Version 2 startet R1 offen, R0 ist nur
-      // noch fuer den Trainer sichtbar. Bestehende R0-Daten bleiben erhalten.
-      // Version 3: Antwortreihenfolgen der Quizfragen und einiger
-      // Fall-Teilaufgaben wurden gleichverteilt umsortiert. Gespeicherte
-      // Punkte abgegebener Runden bleiben bewusst unveraendert, die
-      // Detailanzeige alter Auswertungen kann vom damals gewaehlten Text
-      // abweichen (akzeptiert, es spielen noch keine Studierenden).
-      migrate: (persistedState, version) => {
-        const stand = persistedState as SpielStand;
-        if (version < 2 && stand.runden) {
-          if (stand.runden.R1 && stand.runden.R1.status === 'gesperrt') {
-            stand.runden.R1 = { ...stand.runden.R1, status: 'offen' };
-          }
-        }
-        return stand as SpielStand & SpielAktionen;
-      },
+      version: 4,
+      migrate: (persistedState, version) =>
+        migriereSpielstand(persistedState, version) as SpielStand & SpielAktionen,
     },
   ),
 );
 
-// Punkte einer Runde (Quiz plus Faelle).
+// Punkte einer Runde oder eines Moduls (Quiz plus Faelle).
 export function rundenPunkte(stand: RundenStand): number {
   return stand.punkteQuiz + stand.punkteFaelle;
 }

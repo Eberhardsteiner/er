@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Download, XCircle } from 'lucide-react';
-import type { Fall, Lektion, Teilaufgabe } from '../../content/typen';
-import { bilanzNachRunde } from '../../engine/ableitung';
+import type { Fall, Lektion, RundenId, Teilaufgabe, Zusatzmodul } from '../../content/typen';
+import { aktuelleVertiefungsbilanz, bilanzNachRunde } from '../../engine/ableitung';
 import { geaendertePostenIds } from '../../engine/bilanz';
 import { maxPunkteFall, punkteTeilaufgabe } from '../../engine/scoring';
-import { rundenPunkte, useSpielstand } from '../../store/spielstand';
+import { holeStand, istModulId, rundenPunkte, useSpielstand } from '../../store/spielstand';
 import type { FallStand } from '../../store/spielstand';
 import { Badge } from '../../components/Badge';
 import { BilanzAnsicht } from '../../components/BilanzAnsicht';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
+import { GuVStaffel } from '../../components/GuVStaffel';
 import { Punktezaehler } from '../../components/Punktezaehler';
 
 function eingabeAlsText(teilaufgabe: Teilaufgabe, eingabe: string | number | null): string {
@@ -86,14 +87,23 @@ function FallErgebnis({ fall, fallStand }: { fall: Fall; fallStand: FallStand | 
 }
 
 // Auswertung: Punkteuebersicht, Quizteil, Fallteil, Bilanzteil, PDF und Weiter.
-export function AuswertungAnsicht({ lektion }: { lektion: Lektion }) {
+// Gilt seit Phase Z0 fuer Kernrunden und Zusatzmodule.
+export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul }) {
   const navigate = useNavigate();
-  const stand = useSpielstand((s) => s.runden[lektion.id]);
+  const istModul = istModulId(lektion.id);
+  const stand = useSpielstand((s) => holeStand(s, lektion.id));
   const name = useSpielstand((s) => s.name);
   const notiz = useSpielstand((s) => s.notizen[lektion.id]);
+  const module = useSpielstand((s) => s.module);
+  const freigeschaltet = useSpielstand((s) => s.freigeschalteteModule);
 
-  const bilanz = bilanzNachRunde(lektion.id);
+  if (!stand) return null;
+
+  const bilanz = istModul
+    ? aktuelleVertiefungsbilanz(module, freigeschaltet)
+    : bilanzNachRunde(lektion.id as RundenId);
   const hervorgehoben = lektion.bilanzDelta ? geaendertePostenIds(lektion.bilanzDelta) : undefined;
+  const guv = istModul ? (lektion as Zusatzmodul).guv : undefined;
 
   return (
     <div className="flex flex-col gap-6">
@@ -174,12 +184,18 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion }) {
         </div>
       </section>
 
-      <section aria-label="Bilanz nach der Runde">
-        <h3 className="mb-3 text-lg font-semibold text-petrol-900">Bilanz nach der Runde</h3>
+      <section aria-label={istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}>
+        <h3 className="mb-3 text-lg font-semibold text-petrol-900">
+          {istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
+        </h3>
         <Card>
           {lektion.bilanzDelta ? (
             <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
               {lektion.bilanzDelta.erlaeuterung}
+            </p>
+          ) : istModul ? (
+            <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+              Dieses Modul verändert die Vertiefungsbilanz nicht.
             </p>
           ) : (
             <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
@@ -191,17 +207,34 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion }) {
         </Card>
       </section>
 
+      {guv && guv.length > 0 ? (
+        <section aria-label="Gewinn- und Verlustrechnung">
+          <h3 className="mb-3 text-lg font-semibold text-petrol-900">
+            Gewinn- und Verlustrechnung
+          </h3>
+          <Card>
+            <GuVStaffel zeilen={guv} />
+          </Card>
+        </section>
+      ) : null}
+
       <div className="flex flex-wrap gap-3">
         <Button
           onClick={() => {
-            // PDF-Modul erst bei Bedarf laden, haelt den Start der App schlank.
-            void import('../../pdf/rundenPdf').then((m) =>
-              m.erzeugeRundenPdf(lektion, stand, name ?? '', bilanz, notiz ?? ''),
-            );
+            // PDF-Module erst bei Bedarf laden, haelt den Start der App schlank.
+            if (istModul) {
+              void import('../../pdf/modulPdf').then((m) =>
+                m.erzeugeModulPdf(lektion as Zusatzmodul, stand, name ?? '', bilanz, notiz ?? ''),
+              );
+            } else {
+              void import('../../pdf/rundenPdf').then((m) =>
+                m.erzeugeRundenPdf(lektion as Lektion, stand, name ?? '', bilanz, notiz ?? ''),
+              );
+            }
           }}
         >
           <Download size={16} aria-hidden="true" />
-          PDF dieser Runde laden
+          {istModul ? 'PDF dieses Moduls laden' : 'PDF dieser Runde laden'}
         </Button>
         {lektion.id === 'R7' ? (
           <Button variante="sekundaer" onClick={() => navigate('/gesamt')}>

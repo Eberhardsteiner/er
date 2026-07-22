@@ -2,13 +2,13 @@ import { useLocation } from 'react-router-dom';
 import { Seitenleiste } from '../../components/Seitenleiste';
 import { useSpielstand } from '../../store/spielstand';
 import { useUi } from '../../store/uiStore';
-import { sichtbareLektionen } from '../../content';
-import type { RundenId } from '../../content/typen';
+import { sichtbareLektionen, zusatzmodule } from '../../content';
+import type { SpielId } from '../../content/typen';
 import { useState, useEffect } from 'react';
 
-function rundeAusPfad(pfad: string): RundenId | null {
-  const treffer = pfad.match(/\/runde\/(R[0-7])/);
-  return treffer ? (treffer[1] as RundenId) : null;
+function rundeAusPfad(pfad: string): SpielId | null {
+  const treffer = pfad.match(/\/(?:runde|modul)\/(R[0-7]|Z[1-4])/);
+  return treffer ? (treffer[1] as SpielId) : null;
 }
 
 // Notizbuch: Textbereich je Runde, automatische Speicherung, Zeichenzaehler.
@@ -18,11 +18,16 @@ export function NotizbuchLeiste() {
   const notizen = useSpielstand((s) => s.notizen);
   const setzeNotiz = useSpielstand((s) => s.setzeNotiz);
   const istTrainer = useSpielstand((s) => s.istTrainer);
+  const freigeschaltet = useSpielstand((s) => s.freigeschalteteModule);
   const location = useLocation();
 
   const lektionen = sichtbareLektionen(istTrainer);
+  // Notiz-Abschnitte fuer Module: freigeschaltet (oder Trainer) und mit Content.
+  const notizModule = zusatzmodule.filter(
+    (m) => !m.shell && (istTrainer || freigeschaltet.includes(m.id)),
+  );
   const aktuelleRunde = rundeAusPfad(location.pathname) ?? lektionen[0]?.id ?? 'R1';
-  const [gewaehlteRunde, setGewaehlteRunde] = useState<RundenId>(aktuelleRunde);
+  const [gewaehlteRunde, setGewaehlteRunde] = useState<SpielId>(aktuelleRunde);
 
   useEffect(() => {
     const runde = rundeAusPfad(location.pathname);
@@ -40,11 +45,16 @@ export function NotizbuchLeiste() {
         id="notiz-runde"
         className="mb-3 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
         value={gewaehlteRunde}
-        onChange={(e) => setGewaehlteRunde(e.target.value as RundenId)}
+        onChange={(e) => setGewaehlteRunde(e.target.value as SpielId)}
       >
         {lektionen.map((l) => (
           <option key={l.id} value={l.id}>
             {l.nurTrainer ? `${l.id} ${l.titel} (nur Trainer)` : `Runde ${l.id.slice(1)}: ${l.titel}`}
+          </option>
+        ))}
+        {notizModule.map((m) => (
+          <option key={m.id} value={m.id}>
+            Modul {m.id}: {m.titel}
           </option>
         ))}
       </select>

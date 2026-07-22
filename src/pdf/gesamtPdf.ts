@@ -2,10 +2,11 @@
 // Schlussbilanz und umrandetem Versandhinweis. Keine Notizen, keine Kachelinhalte.
 
 import autoTable from 'jspdf-autotable';
-import { lektionen } from '../content';
-import type { Bilanz, RundenId } from '../content/typen';
+import { lektionen, zusatzmodule } from '../content';
+import type { Bilanz, ModulId, RundenId } from '../content/typen';
+import { anzahlGespielteModule, maxZusatzPunkte, zusatzPunkte } from '../engine/ableitung';
 import { ermittleRang, MAX_PUNKTE_GESAMT } from '../engine/scoring';
-import type { RundenStand } from '../store/spielstand';
+import type { ModulStand, RundenStand } from '../store/spielstand';
 import {
   nameSlug,
   neuesDokument,
@@ -26,6 +27,7 @@ export function erzeugeGesamtPdf(
   runden: Record<RundenId, RundenStand>,
   gesamt: number,
   schlussbilanz: Bilanz,
+  moduleStand: Partial<Record<ModulId, ModulStand>> = {},
 ): void {
   const doc = neuesDokument();
 
@@ -66,6 +68,42 @@ export function erzeugeGesamtPdf(
     },
   });
   y = tabellenEndeY(doc);
+
+  // Zusatzmodule: eigener Block nur, wenn mindestens ein Modul ausgewertet ist.
+  // Der Rang berechnet sich unveraendert nur aus den 700 Kernpunkten.
+  const gespielteModule = anzahlGespielteModule(moduleStand);
+  if (gespielteModule > 0) {
+    y = zeichneAbschnitt(doc, 'Zusatzmodule', y);
+    autoTable(doc, {
+      startY: y,
+      margin: { left: SEITENRAND, right: SEITENRAND },
+      head: [['Modul', 'Quiz', 'Fälle', 'Gesamt']],
+      body: zusatzmodule
+        .filter((m) => moduleStand[m.id]?.status === 'ausgewertet')
+        .map((m) => {
+          const stand = moduleStand[m.id];
+          return [
+            `Modul ${m.id}: ${m.titel}`,
+            String(stand?.punkteQuiz ?? 0),
+            String(stand?.punkteFaelle ?? 0),
+            String((stand?.punkteQuiz ?? 0) + (stand?.punkteFaelle ?? 0)),
+          ];
+        }),
+      styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
+      headStyles: { fillColor: PETROL, textColor: [255, 255, 255] },
+      columnStyles: {
+        1: { halign: 'right', cellWidth: 18 },
+        2: { halign: 'right', cellWidth: 18 },
+        3: { halign: 'right', cellWidth: 18 },
+      },
+    });
+    y = tabellenEndeY(doc);
+    y = zeichneText(
+      doc,
+      `Zusatzpunkte: ${zusatzPunkte(moduleStand)} von ${maxZusatzPunkte()}, ${gespielteModule} von 4 Modulen gespielt. Ohne Einfluss auf den Rang.`,
+      y,
+    );
+  }
 
   // Schlussbilanz
   y = zeichneAbschnitt(doc, 'Schlussbilanz', y);

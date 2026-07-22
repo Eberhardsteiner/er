@@ -46,6 +46,14 @@ export function App() {
             }
           />
           <Route
+            path="/modul/:rundenId"
+            element={
+              <MitName>
+                <LektionSeite />
+              </MitName>
+            }
+          />
+          <Route
             path="/gesamt"
             element={
               <MitName>

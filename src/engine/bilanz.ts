@@ -1,6 +1,13 @@
 // Bilanz-Engine: Deltas anwenden, Invariante pruefen, Betraege formatieren.
 
-import type { Bilanz, BilanzDelta, BilanzGruppe, BilanzPosten } from '../content/typen';
+import type {
+  Bilanz,
+  BilanzDelta,
+  BilanzGruppe,
+  BilanzPosten,
+  GuVZeile,
+  Zusatzmodul,
+} from '../content/typen';
 
 function kopiereBilanz(bilanz: Bilanz): Bilanz {
   return {
@@ -108,4 +115,38 @@ export function geaendertePostenIds(delta: BilanzDelta): Set<string> {
   for (const a of delta.aenderungen) ids.add(a.postenId);
   for (const n of delta.neuePosten ?? []) ids.add(n.posten.id);
   return ids;
+}
+
+// Vertiefungsbilanz (Phase Z0): Schlussbilanz plus die Deltas der uebergebenen
+// Zusatzmodule. Die Deltas verschiedener Module sind disjunkt (Validator),
+// die Reihenfolge spielt deshalb keine Rolle. Die Kernkette bleibt unberuehrt.
+export function vertiefungsbilanz(schlussbilanz: Bilanz, aktiveModule: Zusatzmodul[]): Bilanz {
+  let bilanz = schlussbilanz;
+  for (const modul of aktiveModule) {
+    if (modul.bilanzDelta) {
+      bilanz = wendeDeltaAn(bilanz, modul.bilanzDelta);
+    }
+  }
+  return { ...bilanz, stichtagLabel: 'Vertiefungsbilanz zum 1. Jänner' };
+}
+
+// GuV-Staffelpruefung (fuer Z4): Die Summe aller Nicht-Zwischensummen-Zeilen
+// muss das Sollergebnis ergeben, und jede als Zwischensumme markierte
+// Ergebniszeile muss diesen Wert tragen. Fehler mit Differenzbetrag.
+export function pruefeGuV(zeilen: GuVZeile[], sollErgebnis: number): void {
+  const summe = zeilen
+    .filter((z) => !z.istZwischensumme)
+    .reduce((s, z) => s + z.betrag, 0);
+  if (summe !== sollErgebnis) {
+    throw new Error(
+      `GuV-Staffel ergibt ${summe}, erwartet ${sollErgebnis}, Differenz ${summe - sollErgebnis}.`,
+    );
+  }
+  for (const zeile of zeilen) {
+    if (zeile.istZwischensumme && zeile.betrag !== sollErgebnis) {
+      throw new Error(
+        `GuV-Zwischensumme "${zeile.bezeichnung}" ist ${zeile.betrag}, erwartet ${sollErgebnis}, Differenz ${zeile.betrag - sollErgebnis}.`,
+      );
+    }
+  }
 }

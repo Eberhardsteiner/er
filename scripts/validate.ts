@@ -2,10 +2,18 @@
 // Laedt alle Lektionen aus src/content und prueft die Contentregeln.
 // Ausgabe als Liste je Lektion, Exit-Code ungleich null bei Befund.
 
-import { lektionen, startBilanz } from '../src/content';
-import type { Bilanz, Lektion, RundenId } from '../src/content/typen';
-import { pruefeBilanz, summeSeite, wendeDeltaAn } from '../src/engine/bilanz';
-import { kennwortFuerRunde } from '../src/engine/kennwort';
+import { lektionen, startBilanz, zusatzmodule } from '../src/content';
+import type { Bilanz, Lektion, ModulId, RundenId, Zusatzmodul } from '../src/content/typen';
+import { pruefeBilanz, pruefeGuV, summeSeite, wendeDeltaAn } from '../src/engine/bilanz';
+import { kennwortFuerModul, kennwortFuerRunde } from '../src/engine/kennwort';
+import {
+  pruefeModulDeltaEinzeln,
+  pruefeModulDisjunktheit,
+  pruefeModulKombination,
+} from '../src/engine/module';
+
+// Sollwert fuer die GuV des Moduls Z4: Bilanzgewinn der Schlussbilanz.
+const GUV_SOLL_ERGEBNIS = 2705;
 
 // Kontrollwerte der Musterbilanz je Runde (aus den Mega-Prompts der Phasen).
 // Die Kette Gruendungsbilanz, R3, R4 muss in Folge exakt stimmen.
@@ -122,7 +130,8 @@ function pruefeKontrollwerte(runde: RundenId, bilanz: Bilanz): string[] {
   return fehler;
 }
 
-function pruefeLektion(lektion: Lektion): string[] {
+// Contentregeln gelten fuer Lektionen und Zusatzmodule gleichermassen.
+function pruefeLektion(lektion: Lektion | Zusatzmodul): string[] {
   const fehler: string[] = [];
 
   // Genau 6 Kacheln
@@ -204,12 +213,14 @@ function pruefeLektion(lektion: Lektion): string[] {
 
   // Kennwort definiert
   try {
-    const kennwort = kennwortFuerRunde(lektion.id);
+    const kennwort = lektion.id.startsWith('Z')
+      ? kennwortFuerModul(lektion.id as ModulId)
+      : kennwortFuerRunde(lektion.id as RundenId);
     if (kennwort.trim() === '') {
-      fehler.push('Für die Runde ist kein Kennwort definiert.');
+      fehler.push('Es ist kein Kennwort definiert.');
     }
   } catch {
-    fehler.push('Für die Runde ist kein Kennwort definiert.');
+    fehler.push('Es ist kein Kennwort definiert.');
   }
 
   return fehler;
@@ -266,6 +277,69 @@ for (const lektion of lektionen) {
       console.error(`  - ${f}`);
     }
   }
+}
+
+// ---- Zusatzmodule (Phase Z0) ----
+// laufendeBilanz ist nach der Kernkette die Schlussbilanz. Auf ihr arbeiten
+// die Modul-Deltas (Vertiefungsbilanz), niemals in der Kernkette.
+const schlussbilanzFuerModule = laufendeBilanz;
+console.log('\nZusatzmodule:');
+for (const modul of zusatzmodule) {
+  if (modul.shell) {
+    const shellFehler: string[] = [];
+    if (modul.titel.trim() === '') {
+      shellFehler.push('Der Titel darf nicht leer sein.');
+    }
+    try {
+      if (kennwortFuerModul(modul.id).trim() === '') {
+        shellFehler.push('Es ist kein Kennwort definiert.');
+      }
+    } catch {
+      shellFehler.push('Es ist kein Kennwort definiert.');
+    }
+    if (shellFehler.length === 0) {
+      console.log(`${modul.id} (${modul.titel}): Shell, Inhalt ausstehend`);
+    } else {
+      befunde += shellFehler.length;
+      console.error(`${modul.id} (${modul.titel}): ${shellFehler.length} Befund(e)`);
+      for (const f of shellFehler) console.error(`  - ${f}`);
+    }
+    continue;
+  }
+
+  const fehler = pruefeLektion(modul);
+  fehler.push(...pruefeModulDeltaEinzeln(schlussbilanzFuerModule, modul));
+  if (modul.guv) {
+    try {
+      pruefeGuV(modul.guv, GUV_SOLL_ERGEBNIS);
+    } catch (fehlerObjekt) {
+      fehler.push(`GuV: ${(fehlerObjekt as Error).message}`);
+    }
+  }
+
+  if (fehler.length === 0) {
+    const verteilung = [0, 0, 0, 0, 0];
+    for (const frage of modul.quiz) verteilung[frage.richtig]++;
+    console.log(
+      `${modul.id} (${modul.titel}): in Ordnung, Antwortverteilung ${verteilung.join('/')}`,
+    );
+  } else {
+    befunde += fehler.length;
+    console.error(`${modul.id} (${modul.titel}): ${fehler.length} Befund(e)`);
+    for (const f of fehler) console.error(`  - ${f}`);
+  }
+}
+
+// Disjunktheit und Kombination ueber alle Module.
+const modulQuerFehler = [
+  ...pruefeModulDisjunktheit(zusatzmodule),
+  ...pruefeModulKombination(schlussbilanzFuerModule, zusatzmodule),
+];
+if (modulQuerFehler.length === 0) {
+  console.log('Modulkombination: disjunkt und balanciert');
+} else {
+  befunde += modulQuerFehler.length;
+  for (const f of modulQuerFehler) console.error(`  - ${f}`);
 }
 
 if (befunde > 0) {

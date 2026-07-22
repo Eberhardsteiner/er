@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { alleRundenIds, findeLektion } from '../../content';
-import { kennwortFuerRunde, trainerKennwort } from '../../engine/kennwort';
+import { alleRundenIds, findeLektion, zusatzmodule } from '../../content';
+import { kennwortFuerModul, kennwortFuerRunde, trainerKennwort } from '../../engine/kennwort';
 import { useSpielstand } from '../../store/spielstand';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -14,7 +14,11 @@ export function TrainerSeite() {
   const navigate = useNavigate();
   const istTrainer = useSpielstand((s) => s.istTrainer);
   const runden = useSpielstand((s) => s.runden);
+  const module = useSpielstand((s) => s.module);
+  const freigeschalteteModule = useSpielstand((s) => s.freigeschalteteModule);
   const direktZuFaellen = useSpielstand((s) => s.direktZuFaellen);
+  const schalteModulFrei = useSpielstand((s) => s.schalteModulFrei);
+  const deaktiviereModul = useSpielstand((s) => s.deaktiviereModul);
   const spielZuruecksetzen = useSpielstand((s) => s.spielZuruecksetzen);
   const name = useSpielstand((s) => s.name);
   const [resetSchritt, setResetSchritt] = useState<0 | 1 | 2>(0);
@@ -40,6 +44,12 @@ export function TrainerSeite() {
               id === 'R0' ? 'R0 Probelauf (nur Trainer)' : `Runde ${id.slice(1)}`,
               <code key={id} className="rounded bg-petrol-100 px-2 py-0.5">
                 {kennwortFuerRunde(id)}
+              </code>,
+            ]),
+            ...zusatzmodule.map((modul) => [
+              `Modul ${modul.id}: ${modul.titel}`,
+              <code key={modul.id} className="rounded bg-petrol-100 px-2 py-0.5">
+                {kennwortFuerModul(modul.id)}
               </code>,
             ]),
             [
@@ -106,6 +116,62 @@ export function TrainerSeite() {
         <p className="mt-3 text-xs text-gray-500">
           Der Direkteinstieg überspringt Kacheln- und Quizpflicht. Das Quiz zählt dann 0 Punkte und
           wird als nicht absolviert vermerkt.
+        </p>
+      </Card>
+
+      <Card className="mt-6">
+        <h2 className="mb-3 font-semibold text-petrol-900">Zusatzmodule</h2>
+        <div className="flex flex-col gap-3">
+          {zusatzmodule.map((modul) => {
+            const frei = freigeschalteteModule.includes(modul.id);
+            const stand = module[modul.id];
+            return (
+              <div
+                key={modul.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 px-4 py-2 text-sm"
+              >
+                <span className="font-medium text-petrol-900">
+                  Modul {modul.id}: {modul.titel}
+                  <span className="ml-2 text-xs font-normal text-gray-500">
+                    {modul.shell ? 'Shell, Inhalt ausstehend' : `Status: ${stand?.status ?? 'nicht aktiviert'}`}
+                  </span>
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    variante="sekundaer"
+                    onClick={() => (frei ? deaktiviereModul(modul.id) : schalteModulFrei(modul.id))}
+                  >
+                    {frei ? 'Deaktivieren' : 'Aktivieren'}
+                  </Button>
+                  <Button
+                    variante="sekundaer"
+                    disabled={!frei || modul.shell === true}
+                    onClick={() => navigate(`/modul/${modul.id}`)}
+                  >
+                    Modul öffnen
+                  </Button>
+                  <Button
+                    variante="sekundaer"
+                    disabled={
+                      !frei ||
+                      modul.shell === true ||
+                      (stand?.status !== 'gesperrt' && stand?.status !== 'offen')
+                    }
+                    onClick={() => {
+                      direktZuFaellen(modul.id);
+                      navigate(`/modul/${modul.id}`);
+                    }}
+                  >
+                    Direkt zu den Fällen
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-xs text-gray-500">
+          Die Aktivierung wirkt nur lokal auf diesem Gerät. Studierende schalten Module mit dem
+          jeweiligen Kennwort frei.
         </p>
       </Card>
 

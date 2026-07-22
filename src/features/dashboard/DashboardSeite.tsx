@@ -1,12 +1,24 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Award, CheckCircle2, Lock, PlayCircle } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { BilanzAnsicht } from '../../components/BilanzAnsicht';
 import { Card } from '../../components/Card';
-import { alleRundenIds, findeLektion, platzhalterTitel } from '../../content';
-import type { RundenId } from '../../content/typen';
-import { aktuelleBilanz, gesamtPunkte } from '../../engine/ableitung';
+import { Modal } from '../../components/Modal';
+import { TextFeld } from '../../components/Eingabefeld';
+import { alleRundenIds, findeLektion, platzhalterTitel, zusatzmodule } from '../../content';
+import type { RundenId, Zusatzmodul } from '../../content/typen';
+import {
+  aktuelleBilanz,
+  aktuelleVertiefungsbilanz,
+  ausgewerteteModule,
+  gesamtPunkte,
+  maxZusatzPunkte,
+  zusatzbereichSichtbar,
+  zusatzPunkte,
+} from '../../engine/ableitung';
+import { pruefeModulKennwort } from '../../engine/kennwort';
 import { MAX_PUNKTE_GESAMT } from '../../engine/scoring';
 import { rundenPunkte, useSpielstand } from '../../store/spielstand';
 import type { RundenStand } from '../../store/spielstand';
@@ -89,6 +101,133 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
   );
 }
 
+// Karte eines Zusatzmoduls: gesperrt mit Kennwortdialog, Shell-Hinweis oder spielbar.
+function ModulKarte({ modul }: { modul: Zusatzmodul }) {
+  const navigate = useNavigate();
+  const istTrainer = useSpielstand((s) => s.istTrainer);
+  const frei = useSpielstand((s) => s.freigeschalteteModule.includes(modul.id));
+  const stand = useSpielstand((s) => s.module[modul.id]);
+  const schalteModulFrei = useSpielstand((s) => s.schalteModulFrei);
+  const deaktiviereModul = useSpielstand((s) => s.deaktiviereModul);
+  const [dialogOffen, setDialogOffen] = useState(false);
+  const [kennwort, setKennwort] = useState('');
+  const [fehler, setFehler] = useState('');
+
+  const spielbar = frei && !modul.shell;
+  const ausgewertet = stand?.status === 'ausgewertet';
+
+  function freischalten() {
+    if (pruefeModulKennwort(modul.id, kennwort)) {
+      schalteModulFrei(modul.id);
+      setDialogOffen(false);
+      setKennwort('');
+      setFehler('');
+    } else {
+      setFehler('Das Kennwort stimmt nicht. Frag im Zweifel beim Trainer nach.');
+    }
+  }
+
+  return (
+    <Card
+      className={`flex min-h-32 flex-col justify-between ${
+        spielbar ? 'cursor-pointer transition-shadow hover:shadow-md' : 'bg-gray-50'
+      }`}
+      onClick={() => {
+        if (spielbar) navigate(`/modul/${modul.id}`);
+      }}
+      role={spielbar ? 'button' : undefined}
+      aria-label={spielbar ? `Modul ${modul.titel} öffnen` : `Modul ${modul.titel}`}
+    >
+      <div>
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-semibold text-petrol-900">
+            Modul {modul.id}: {modul.titel}
+          </p>
+          {!frei ? (
+            <Lock size={18} className="shrink-0 text-gray-400" aria-hidden="true" />
+          ) : ausgewertet ? (
+            <CheckCircle2 size={18} className="shrink-0 text-erfolg" aria-hidden="true" />
+          ) : (
+            <PlayCircle size={18} className="shrink-0 text-amber-600" aria-hidden="true" />
+          )}
+        </div>
+        <p className="mt-1 text-sm text-gray-600">{modul.untertitel}</p>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        {!frei ? (
+          <Button
+            variante="sekundaer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDialogOffen(true);
+            }}
+          >
+            Mit Kennwort freischalten
+          </Button>
+        ) : modul.shell ? (
+          <Badge farbe="grau">Inhalt folgt in Kürze</Badge>
+        ) : ausgewertet ? (
+          <span className="text-sm font-semibold text-amber-600">
+            {stand ? rundenPunkte(stand) : 0} von 100 Zusatzpunkten
+          </span>
+        ) : (
+          <Badge farbe="petrol">Freigeschaltet</Badge>
+        )}
+        {istTrainer ? (
+          <Button
+            variante="dezent"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (frei) {
+                deaktiviereModul(modul.id);
+              } else {
+                schalteModulFrei(modul.id);
+              }
+            }}
+          >
+            {frei ? 'Deaktivieren' : 'Aktivieren'}
+          </Button>
+        ) : null}
+      </div>
+
+      <Modal
+        offen={dialogOffen}
+        titel={`Modul ${modul.id} freischalten`}
+        onSchliessen={() => {
+          setDialogOffen(false);
+          setFehler('');
+          setKennwort('');
+        }}
+        fussbereich={
+          <>
+            <Button variante="sekundaer" onClick={() => setDialogOffen(false)}>
+              Abbrechen
+            </Button>
+            <Button onClick={freischalten}>Freischalten</Button>
+          </>
+        }
+      >
+        <p className="mb-4">
+          Gib das vom Trainer bekanntgegebene Kennwort für dieses Modul ein.
+        </p>
+        <TextFeld
+          label="Kennwort"
+          wert={kennwort}
+          onWert={(w) => {
+            setKennwort(w);
+            setFehler('');
+          }}
+          fehler={fehler}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') freischalten();
+          }}
+        />
+      </Modal>
+    </Card>
+  );
+}
+
 // Regulaerer Weg zur Gesamtauswertung, sichtbar nach der R7-Auswertung.
 function GesamtButton() {
   const navigate = useNavigate();
@@ -104,6 +243,14 @@ export function DashboardSeite() {
   const name = useSpielstand((s) => s.name);
   const runden = useSpielstand((s) => s.runden);
   const istTrainer = useSpielstand((s) => s.istTrainer);
+  const module = useSpielstand((s) => s.module);
+  const freigeschaltet = useSpielstand((s) => s.freigeschalteteModule);
+
+  const moduleSichtbar = zusatzbereichSichtbar(runden, istTrainer);
+  const zusatz = zusatzPunkte(module);
+  const zusatzMax = maxZusatzPunkte();
+  const vertiefungAktiv =
+    ausgewerteteModule(module, freigeschaltet).filter((m) => m.bilanzDelta).length > 0;
 
   const punkte = gesamtPunkte(runden);
   const bilanz = aktuelleBilanz(runden);
@@ -145,6 +292,39 @@ export function DashboardSeite() {
           </p>
         </Card>
       </div>
+
+      {moduleSichtbar ? (
+        <section aria-label="Zusatzmodule" className="mt-10">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xl font-bold text-petrol-900">Zusatzmodule</h2>
+            <span className="rounded-full bg-petrol-100 px-3 py-1 text-sm font-medium text-petrol-900">
+              {zusatz} von {zusatzMax} Zusatzpunkten
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-gray-700">
+            Vier Vertiefungen zum 1. Jänner des Folgejahres. Dein Trainer nennt Dir das Kennwort
+            für jedes freigegebene Modul.
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            {zusatzmodule.map((modul) => (
+              <ModulKarte key={modul.id} modul={modul} />
+            ))}
+          </div>
+
+          {vertiefungAktiv ? (
+            <Card className="mt-6">
+              <h3 className="mb-3 font-semibold text-petrol-900">
+                Vertiefungsbilanz zum 1. Jänner
+              </h3>
+              <BilanzAnsicht bilanz={aktuelleVertiefungsbilanz(module, freigeschaltet)} />
+              <p className="mt-4 rounded-lg bg-petrol-100 p-3 text-xs text-petrol-900">
+                Eröffnungsbilanz gleich Schlussbilanz (§ 201 Abs 2 Z 6 UGB), erweitert um Deine
+                Zusatzmodule.
+              </p>
+            </Card>
+          ) : null}
+        </section>
+      ) : null}
     </div>
   );
 }

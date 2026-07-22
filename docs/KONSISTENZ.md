@@ -152,3 +152,17 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 ## Rechtsquellenprinzip
 
 - Nur UGB, keine HGB- und keine IFRS-Bezüge in Studierendentexten.
+
+## Zusatzmodule
+
+- Vier trainerfreischaltbare Module mit Kennwörtern: Z1 Eigenkapital
+  (GoldenShare), Z2 Verbindlichkeiten (IronBridge), Z3
+  Rechnungsabgrenzungsposten (TimeGate), Z4 GuV (ClearWater).
+- Modul-Deltas wirken nur auf die Vertiefungsbilanz zum 1. Jänner, niemals auf
+  die Kernkette (Gründungsbilanz bis Schlussbilanz 719.305). Jedes Modul-Delta
+  balanciert für sich auf Basis der Schlussbilanz, verschiedene Module
+  verändern niemals denselben Posten (Disjunktheit, vom Validator erzwungen).
+- Punkteregel: Jedes Modul bringt maximal 100 Zusatzpunkte (20 Quiz, 80
+  Fälle), getrennt von der Kernwertung geführt. Der Rang berechnet sich
+  unverändert nur aus den 700 Kernpunkten.
+- Sollwert: GuV-Ergebnis Z4 gleich 2.705 gleich Bilanzgewinn der Schlussbilanz.

@@ -5,7 +5,7 @@
 // Planspiel ohne Pruefungscharakter ist das akzeptiert (siehe Produktionsplan).
 
 import { alleRundenIds } from '../content';
-import type { RundenId } from '../content/typen';
+import type { ModulId, RundenId, SpielId } from '../content/typen';
 
 const KENNWOERTER_B64: Record<RundenId, string> = {
   R0: 'VGVzdERyaXZl',
@@ -16,6 +16,15 @@ const KENNWOERTER_B64: Record<RundenId, string> = {
   R5: 'SXJvbldvcmtz',
   R6: 'UXVpY2tTaWx2ZXI=',
   R7: 'U2FmZUhhcmJvcg==',
+};
+
+// Kennwoerter der Zusatzmodule: schalten das Modul frei und bestaetigen
+// spaeter auch das Kennwort-Gate des Moduls (einheitliche Bedienung).
+const MODUL_KENNWOERTER_B64: Record<ModulId, string> = {
+  Z1: 'R29sZGVuU2hhcmU=',
+  Z2: 'SXJvbkJyaWRnZQ==',
+  Z3: 'VGltZUdhdGU=',
+  Z4: 'Q2xlYXJXYXRlcg==',
 };
 
 const TRAINER_B64 = 'Q29udHJvbCM5OQ==';
@@ -38,8 +47,23 @@ export function trainerKennwort(): string {
   return dekodiere(TRAINER_B64);
 }
 
+export function kennwortFuerModul(id: ModulId): string {
+  return dekodiere(MODUL_KENNWOERTER_B64[id]);
+}
+
 export function pruefeKennwort(id: RundenId, eingabe: string): boolean {
   return normalisiere(eingabe) === normalisiere(kennwortFuerRunde(id));
+}
+
+export function pruefeModulKennwort(id: ModulId, eingabe: string): boolean {
+  return normalisiere(eingabe) === normalisiere(kennwortFuerModul(id));
+}
+
+// Einheitlicher Vergleich fuer Kernrunden und Zusatzmodule (Kennwort-Gate).
+export function pruefeEinheitKennwort(id: SpielId, eingabe: string): boolean {
+  return id.startsWith('Z')
+    ? pruefeModulKennwort(id as ModulId, eingabe)
+    : pruefeKennwort(id as RundenId, eingabe);
 }
 
 export function pruefeTrainerKennwort(eingabe: string): boolean {

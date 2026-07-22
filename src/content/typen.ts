@@ -87,6 +87,34 @@ export interface Bilanz {
   passiva: BilanzGruppe[];
 }
 
+// Trainerfreischaltbare Zusatzmodule (Phase Z0). Sie spielen nach der
+// Schlussbilanz als Vertiefung zum 1. Jaenner und wirken nur auf die
+// Vertiefungsbilanz, niemals auf die Kernkette.
+export type ModulId = 'Z1' | 'Z2' | 'Z3' | 'Z4';
+
+export interface Zusatzmodul {
+  id: ModulId;
+  titel: string;
+  untertitel: string;
+  intro: { story: string; inhalte: string[]; lernziele: string[] };
+  kacheln: Kachel[]; // genau 6, in Z0 leer erlaubt via shell-Flag
+  quiz: QuizFrage[]; // genau 10, Verteilung 2/2/2/2/2
+  faelle: Fall[]; // Punktsumme 80
+  bilanzDelta?: BilanzDelta; // wirkt auf die Vertiefungsbilanz, Basis Schlussbilanz
+  guv?: GuVZeile[]; // nur Z4
+  shell?: boolean; // true solange kein Content geliefert ist
+}
+
+export interface GuVZeile {
+  id: string;
+  bezeichnung: string; // z. B. "Umsatzerlöse", "Personalaufwand"
+  betrag: number; // Ertraege positiv, Aufwendungen negativ
+  istZwischensumme?: boolean; // z. B. "Jahresergebnis"
+}
+
+// Gemeinsamer Schluesseltyp fuer Kernrunden und Zusatzmodule.
+export type SpielId = RundenId | ModulId;
+
 // Technische Erweiterung gegenueber der Vorgabe: neuePosten erlaubt einer Runde,
 // bislang nicht vorhandene Bilanzposten anzulegen (mit Seite und Gruppe).
 // gruppeEinfuegenVor steuert optional die Einfuegeposition einer neuen Gruppe,

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { findeLektion } from '../../content';
-import type { Lektion, RundenId } from '../../content/typen';
+import { findeEinheit } from '../../content';
+import type { Kachel, Lektion, SpielId, Zusatzmodul } from '../../content/typen';
 import { darfFaelleBearbeiten, darfQuizStarten } from '../../engine/gates';
-import { useSpielstand } from '../../store/spielstand';
+import { holeStand, istModulId, useSpielstand } from '../../store/spielstand';
 import type { RundenStand } from '../../store/spielstand';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -31,7 +31,7 @@ function anfangsStufe(stand: RundenStand): Stufe {
 
 function stufeErlaubt(
   stufe: Stufe,
-  lektion: Lektion,
+  einheit: { kacheln: Kachel[] },
   stand: RundenStand,
   istTrainer: boolean,
 ): boolean {
@@ -40,7 +40,7 @@ function stufeErlaubt(
     case 'kacheln':
       return true;
     case 'quiz':
-      return darfQuizStarten(lektion, stand, istTrainer) || stand.status !== 'offen';
+      return darfQuizStarten(einheit, stand, istTrainer) || stand.status !== 'offen';
     case 'faelle':
       return darfFaelleBearbeiten(stand) || stand.status === 'ausgewertet';
     case 'auswertung':
@@ -50,22 +50,22 @@ function stufeErlaubt(
 
 function Fortschrittsleiste({
   aktiv,
-  lektion,
+  einheit,
   stand,
   istTrainer,
   onWechsel,
 }: {
   aktiv: Stufe;
-  lektion: Lektion;
+  einheit: { kacheln: Kachel[] };
   stand: RundenStand;
   istTrainer: boolean;
   onWechsel: (stufe: Stufe) => void;
 }) {
   return (
-    <nav aria-label="Stationen der Runde" className="mb-6">
+    <nav aria-label="Stationen" className="mb-6">
       <ol className="flex flex-wrap gap-2">
         {stufenReihenfolge.map((s, i) => {
-          const erlaubt = stufeErlaubt(s.id, lektion, stand, istTrainer);
+          const erlaubt = stufeErlaubt(s.id, einheit, stand, istTrainer);
           const istAktiv = s.id === aktiv;
           return (
             <li key={s.id} className="flex items-center gap-2">
@@ -93,15 +93,21 @@ function Fortschrittsleiste({
   );
 }
 
-function IntroAnsicht({ lektion, onWeiter }: { lektion: Lektion; onWeiter: () => void }) {
+function IntroAnsicht({
+  einheit,
+  onWeiter,
+}: {
+  einheit: Lektion | Zusatzmodul;
+  onWeiter: () => void;
+}) {
   return (
     <Card>
-      <p className="text-sm text-gray-800">{lektion.intro.story}</p>
+      <p className="text-sm text-gray-800">{einheit.intro.story}</p>
       <div className="mt-5 grid gap-6 sm:grid-cols-2">
         <div>
           <h3 className="mb-2 font-semibold text-petrol-900">Inhalte</h3>
           <ul className="list-disc pl-5 text-sm text-gray-800">
-            {lektion.intro.inhalte.map((i) => (
+            {einheit.intro.inhalte.map((i) => (
               <li key={i}>{i}</li>
             ))}
           </ul>
@@ -109,7 +115,7 @@ function IntroAnsicht({ lektion, onWeiter }: { lektion: Lektion; onWeiter: () =>
         <div>
           <h3 className="mb-2 font-semibold text-petrol-900">Lernziele</h3>
           <ul className="list-disc pl-5 text-sm text-gray-800">
-            {lektion.intro.lernziele.map((z) => (
+            {einheit.intro.lernziele.map((z) => (
               <li key={z}>{z}</li>
             ))}
           </ul>
@@ -122,60 +128,95 @@ function IntroAnsicht({ lektion, onWeiter }: { lektion: Lektion; onWeiter: () =>
   );
 }
 
+function einheitTitel(einheit: Lektion | Zusatzmodul): string {
+  if (istModulId(einheit.id)) return `Modul ${einheit.id}: ${einheit.titel}`;
+  const lektion = einheit as Lektion;
+  return lektion.nurTrainer
+    ? `${lektion.id} ${lektion.titel} (nur Trainer)`
+    : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`;
+}
+
+// Spielseite fuer Kernrunden (#/runde/:id) und Zusatzmodule (#/modul/:id).
 export function LektionSeite() {
   const { rundenId } = useParams<{ rundenId: string }>();
-  const lektion = findeLektion((rundenId ?? '') as RundenId);
-  const stand = useSpielstand((s) => s.runden[(rundenId ?? 'R0') as RundenId]);
+  const id = (rundenId ?? '') as SpielId;
+  const einheit = findeEinheit(id);
+  const stand = useSpielstand((s) => holeStand(s, id));
   const istTrainer = useSpielstand((s) => s.istTrainer);
+  const freigeschaltet = useSpielstand((s) => s.freigeschalteteModule);
 
   const initialeStufe = useMemo(
     () => (stand ? anfangsStufe(stand) : 'intro'),
-    // Nur beim ersten Rendern der Runde bestimmen.
+    // Nur beim ersten Rendern der Einheit bestimmen.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rundenId],
   );
   const [stufe, setStufe] = useState<Stufe>(initialeStufe);
 
-  if (!lektion || !stand || stand.status === 'gesperrt' || (lektion.nurTrainer && !istTrainer)) {
+  if (!einheit) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (istModulId(einheit.id)) {
+    const modul = einheit as Zusatzmodul;
+    const istFrei = istTrainer || freigeschaltet.includes(modul.id);
+    if (!istFrei) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    if (modul.shell) {
+      return (
+        <div>
+          <h1 className="text-2xl font-bold text-petrol-900">{einheitTitel(modul)}</h1>
+          <p className="mb-6 text-sm text-gray-600">{modul.untertitel}</p>
+          <Card>
+            <p className="text-sm text-gray-700">Inhalt folgt in Kürze.</p>
+          </Card>
+        </div>
+      );
+    }
+  }
+
+  if (!stand || stand.status === 'gesperrt') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const lektion = einheit as Lektion;
+  if (!istModulId(einheit.id) && lektion.nurTrainer && !istTrainer) {
     return <Navigate to="/dashboard" replace />;
   }
 
   function wechsleStufe(ziel: Stufe) {
-    if (lektion && stand && stufeErlaubt(ziel, lektion, stand, istTrainer)) {
+    if (einheit && stand && stufeErlaubt(ziel, einheit, stand, istTrainer)) {
       setStufe(ziel);
     }
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-petrol-900">
-        {lektion.nurTrainer
-          ? `${lektion.id} ${lektion.titel} (nur Trainer)`
-          : `Runde ${lektion.id.slice(1)}: ${lektion.titel}`}
-      </h1>
-      <p className="mb-6 text-sm text-gray-600">{lektion.untertitel}</p>
+      <h1 className="text-2xl font-bold text-petrol-900">{einheitTitel(einheit)}</h1>
+      <p className="mb-6 text-sm text-gray-600">{einheit.untertitel}</p>
 
       <Fortschrittsleiste
         aktiv={stufe}
-        lektion={lektion}
+        einheit={einheit}
         stand={stand}
         istTrainer={istTrainer}
         onWechsel={wechsleStufe}
       />
 
       {stufe === 'intro' ? (
-        <IntroAnsicht lektion={lektion} onWeiter={() => setStufe('kacheln')} />
+        <IntroAnsicht einheit={einheit} onWeiter={() => setStufe('kacheln')} />
       ) : null}
       {stufe === 'kacheln' ? (
-        <KachelGalerie lektion={lektion} onZumQuiz={() => wechsleStufe('quiz')} />
+        <KachelGalerie lektion={einheit} onZumQuiz={() => wechsleStufe('quiz')} />
       ) : null}
       {stufe === 'quiz' ? (
-        <QuizRunner lektion={lektion} onZuDenFaellen={() => setStufe('faelle')} />
+        <QuizRunner lektion={einheit} onZuDenFaellen={() => setStufe('faelle')} />
       ) : null}
       {stufe === 'faelle' ? (
-        <FaelleAnsicht lektion={lektion} onZurAuswertung={() => setStufe('auswertung')} />
+        <FaelleAnsicht lektion={einheit} onZurAuswertung={() => setStufe('auswertung')} />
       ) : null}
-      {stufe === 'auswertung' ? <AuswertungAnsicht lektion={lektion} /> : null}
+      {stufe === 'auswertung' ? <AuswertungAnsicht lektion={einheit} /> : null}
     </div>
   );
 }

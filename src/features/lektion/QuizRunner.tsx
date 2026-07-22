@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import type { Lektion } from '../../content/typen';
-import { useSpielstand } from '../../store/spielstand';
+import type { Lektion, Zusatzmodul } from '../../content/typen';
+import { holeStand, useSpielstand } from '../../store/spielstand';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { WarnModal } from '../../components/WarnModal';
@@ -12,14 +12,16 @@ export function QuizRunner({
   lektion,
   onZuDenFaellen,
 }: {
-  lektion: Lektion;
+  lektion: Lektion | Zusatzmodul;
   onZuDenFaellen: () => void;
 }) {
-  const stand = useSpielstand((s) => s.runden[lektion.id]);
+  const stand = useSpielstand((s) => holeStand(s, lektion.id));
   const setzeQuizAntwort = useSpielstand((s) => s.setzeQuizAntwort);
   const gebeQuizAb = useSpielstand((s) => s.gebeQuizAb);
   const [index, setIndex] = useState(0);
   const [abgabeWarnung, setAbgabeWarnung] = useState(false);
+
+  if (!stand) return null;
 
   const abgegeben = stand.status !== 'offen';
 
