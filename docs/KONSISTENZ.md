@@ -81,6 +81,24 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Alle planmäßigen und außerplanmäßigen Abschreibungen des Spieljahres sind mit
   Runde 5 vollständig gebucht. Die Runden 6 und 7 buchen keine weiteren
   Abschreibungen auf das Anlagevermögen.
+- Runde 6 bucht vier Blöcke: Verkauf der zwölf Lastenräder an Fachhändler um
+  180.000 auf Ziel (Forderungen plus 180.000, Abgang fertige Erzeugnisse 96.000
+  aus den Vorräten, Ergebnis plus 84.000). Zahlungseingang 120.000 von Händlern
+  und Tilgung der Lieferverbindlichkeiten 60.000 (Bank per Saldo plus 60.000
+  auf 90.000, Lieferverbindlichkeiten auf 0). Inventur-Abwertung der Akkuzellen
+  um 3.000 nach dem strengen Niederstwertprinzip (§ 207 UGB).
+  Forderungsbewertung: Einzelwertberichtigung 5.000 (Radhaus Wien, Insolvenz,
+  erwartete Quote 50 Prozent) und Pauschalwertberichtigung 1.000 (2 Prozent von
+  50.000), beide als aktivische Absetzung.
+- Musterbilanz nach Runde 6: Bilanzsumme 719.305. Aktiva: Immaterielle
+  Vermögensgegenstände 13.000, Grundstücke 128.400, Gebäude 295.855, Technische
+  Anlagen und Maschinen 129.050, Vorräte 9.000, Forderungen aus Lieferungen und
+  Leistungen 54.000, Guthaben bei Kreditinstituten 90.000. Passiva: Stammkapital
+  100.000, Bilanzgewinn/Bilanzverlust plus 19.305, Verbindlichkeiten gegenüber
+  Kreditinstituten 600.000, Verbindlichkeiten aus Lieferungen und Leistungen 0
+  (Posten bleibt sichtbar).
+- Das Ergebnis ist damit erstmals positiv. Runde 7 mindert es noch durch die
+  Rückstellungen des Jahresabschlusses.
 
 ## Anlagenverzeichnis (Basis für die Abschreibungen in Runde 5)
 

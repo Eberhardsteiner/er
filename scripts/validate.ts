@@ -58,6 +58,22 @@ const KONTROLLWERTE: Partial<Record<RundenId, Kontrollwerte>> = {
       { postenId: 'lieferverb', betrag: 60000 },
     ],
   },
+  R6: {
+    bilanzsumme: 719305,
+    posten: [
+      { postenId: 'immaterielle', betrag: 13000 },
+      { postenId: 'grundstuecke', betrag: 128400 },
+      { postenId: 'gebaeude', betrag: 295855 },
+      { postenId: 'maschinen', betrag: 129050 },
+      { postenId: 'vorraete', betrag: 9000 },
+      { postenId: 'forderungen', betrag: 54000 },
+      { postenId: 'bank', betrag: 90000 },
+      { postenId: 'stammkapital', betrag: 100000 },
+      { postenId: 'ergebnis', betrag: 19305 },
+      { postenId: 'bankdarlehen', betrag: 600000 },
+      { postenId: 'lieferverb', betrag: 0 },
+    ],
+  },
 };
 
 function pruefeKontrollwerte(runde: RundenId, bilanz: Bilanz): string[] {
