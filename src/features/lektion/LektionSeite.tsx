@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { findeEinheit } from '../../content';
 import type { Kachel, Lektion, SpielId, Zusatzmodul } from '../../content/typen';
@@ -152,6 +152,14 @@ export function LektionSeite() {
     [rundenId],
   );
   const [stufe, setStufe] = useState<Stufe>(initialeStufe);
+
+  // Beim Wechsel zwischen Einheiten ohne Unmount (etwa Trainer-Navigation
+  // oder Browser-Zurueck) darf die Stufe der alten Einheit nicht haengen
+  // bleiben (Robustheits-Befund der Endabnahme, Phase 9).
+  useEffect(() => {
+    setStufe(initialeStufe);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rundenId]);
 
   if (!einheit) {
     return <Navigate to="/dashboard" replace />;

@@ -30,6 +30,10 @@ function TeilaufgabeFeld({
   if (teilaufgabe.typ === 'zahl') {
     return (
       <ZahlFeld
+        // Eindeutige Id je Teilaufgabe: Der Standard-Slug aus dem Label kann
+        // bei aehnlichen Fragen kollidieren, dann zeigt das zweite Label auf
+        // das erste Feld (Barrierefreiheits-Pass Phase 9).
+        id={`eingabe-${fall.id}-${teilaufgabe.id}`}
         label={teilaufgabe.frage}
         wert={typeof eingabe === 'string' ? eingabe : eingabe === null ? '' : String(eingabe)}
         einheit={teilaufgabe.einheit}
