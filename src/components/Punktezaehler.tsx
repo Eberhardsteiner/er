@@ -10,6 +10,11 @@ export function Punktezaehler({ ziel, dauerMs = 900 }: PunktezaehlerProps) {
   const [wert, setWert] = useState(0);
 
   useEffect(() => {
+    // Reduzierte Bewegung: Endwert sofort zeigen, keine Zaehlanimation.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setWert(ziel);
+      return;
+    }
     let laeuft = true;
     const start = performance.now();
     function schritt(jetzt: number) {

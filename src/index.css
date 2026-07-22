@@ -7,6 +7,9 @@
   --color-petrol-100: #e3eef1;
   --color-amber-500: #f2a541;
   --color-amber-600: #d98b1f;
+  /* Amber als Textfarbe auf Weiss: amber-500 und amber-600 liegen unter
+     4,5:1, deshalb dunkle Textvariante mit 5,0:1 (Barrierefreiheits-Pass). */
+  --color-amber-700: #b45309;
   --color-erfolg: #2e7d5b;
   --color-fehler: #c4453c;
   --color-warnung: #b3560e;
@@ -57,4 +60,15 @@ body {
 
 .einblenden {
   animation: sanft-rein 0.2s ease-out;
+}
+
+/* Reduzierte Bewegung: Ein- und Ausblendanimationen sowie Uebergaenge aus. */
+@media (prefers-reduced-motion: reduce) {
+  .toast-animation,
+  .einblenden {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
 }

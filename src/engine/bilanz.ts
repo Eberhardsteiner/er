@@ -102,11 +102,26 @@ export function sichtbarePosten(gruppe: BilanzGruppe): BilanzPosten[] {
   return gruppe.posten.filter((p) => p.betrag !== 0 || p.warBefuellt === true);
 }
 
-const formatierer = new Intl.NumberFormat('de-AT', { maximumFractionDigits: 0 });
+// Oesterreichisches Zahlenformat mit Tausenderpunkt und Dezimalkomma.
+// Bewusst ohne Intl: Der CLDR-Standard fuer de-AT gruppiert mit geschuetzten
+// Leerzeichen, die Fachtexte des Spiels schreiben aber durchgehend 765.805.
+function formatDeAT(wert: number, nachkommastellen: number): string {
+  const negativ = wert < 0;
+  const [ganzzahl, dezimal] = Math.abs(wert).toFixed(nachkommastellen).split('.');
+  const gruppiert = ganzzahl.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const vorzeichen = negativ ? '-' : '';
+  return dezimal ? `${vorzeichen}${gruppiert},${dezimal}` : `${vorzeichen}${gruppiert}`;
+}
 
-// Alle Betraege in ganzen Euro, Anzeige im Format de-AT.
+// Alle Betraege in ganzen Euro, Anzeige im Format de-AT mit Tausenderpunkt.
 export function formatBetrag(betrag: number): string {
-  return formatierer.format(betrag);
+  return formatDeAT(betrag, 0);
+}
+
+// Musterwerte und Loesungen: bis zu zwei Nachkommastellen, ohne unnoetige Nullen.
+export function formatZahl(wert: number): string {
+  const mitKomma = formatDeAT(wert, 2);
+  return mitKomma.replace(/,?0+$/, '');
 }
 
 // Menge der Posten, die ein Delta veraendert oder anlegt (fuer die Hervorhebung).

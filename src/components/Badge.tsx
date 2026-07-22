@@ -4,7 +4,7 @@ type Farbe = 'petrol' | 'amber' | 'erfolg' | 'fehler' | 'grau' | 'warnung';
 
 const stile: Record<Farbe, string> = {
   petrol: 'bg-petrol-100 text-petrol-900',
-  amber: 'bg-amber-500/20 text-amber-600',
+  amber: 'bg-amber-500/20 text-amber-700',
   erfolg: 'bg-erfolg/15 text-erfolg',
   fehler: 'bg-fehler/15 text-fehler',
   warnung: 'bg-warnung/15 text-warnung',

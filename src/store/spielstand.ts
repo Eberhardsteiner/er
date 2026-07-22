@@ -8,10 +8,14 @@
 // in `module`, die Freischaltung in `freigeschalteteModule`.
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { merkeMigrationsfehler, robusterSpeicher } from './speicher';
 import { alleRundenIds, findeEinheit, findeLektion, lektionen } from '../content';
 import type { ModulId, RundenId, SpielId } from '../content/typen';
 import { punkteFall, punkteQuiz } from '../engine/scoring';
+
+// Aktuelle Version des persistierten Spielstands (persist und Dateiexport).
+export const SPIELSTAND_VERSION = 4;
 
 export type RundenStatus =
   | 'gesperrt'
@@ -78,6 +82,7 @@ export interface SpielAktionen {
   setzeNotiz: (einheit: SpielId, text: string) => void;
   schalteModulFrei: (modul: ModulId) => void;
   deaktiviereModul: (modul: ModulId) => void;
+  ladeSpielstand: (stand: SpielStand) => void;
   spielZuruecksetzen: () => void;
 }
 
@@ -115,9 +120,9 @@ function leererFallStand(): FallStand {
   return { eingaben: {}, hilfeGenutzt: false, loesungGenutzt: false, abgegeben: false, punkte: 0 };
 }
 
-function anfangsZustand(): SpielStand {
+export function anfangsZustand(): SpielStand {
   return {
-    version: 4,
+    version: SPIELSTAND_VERSION,
     name: null,
     istTrainer: false,
     onboardingGesehen: false,
@@ -356,13 +361,28 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
           };
         }),
 
+      // Ersetzt den kompletten Spielstand durch einen importierten Stand
+      // (Phase 9). Die Validierung und Migration der Datei laeuft vorher in
+      // engine/spielstandDatei, hier kommt nur ein gueltiger Stand an.
+      ladeSpielstand: (stand) => set({ ...stand, version: SPIELSTAND_VERSION }),
+
       spielZuruecksetzen: () => set({ ...anfangsZustand() }),
     }),
     {
       name: 'alpenrad-v1',
-      version: 4,
-      migrate: (persistedState, version) =>
-        migriereSpielstand(persistedState, version) as SpielStand & SpielAktionen,
+      version: SPIELSTAND_VERSION,
+      storage: createJSONStorage(() => robusterSpeicher),
+      // Fehlgeschlagene Migrationen duerfen die App nicht lahmlegen: Der
+      // Rohstand wird gemerkt (Sicherungsangebot im Banner), das Spiel
+      // startet mit einem frischen Stand.
+      migrate: (persistedState, version) => {
+        try {
+          return migriereSpielstand(persistedState, version) as SpielStand & SpielAktionen;
+        } catch {
+          merkeMigrationsfehler(persistedState);
+          return anfangsZustand() as SpielStand & SpielAktionen;
+        }
+      },
     },
   ),
 );

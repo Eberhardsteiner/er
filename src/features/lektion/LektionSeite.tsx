@@ -105,7 +105,7 @@ function IntroAnsicht({
       <p className="text-sm text-gray-800">{einheit.intro.story}</p>
       <div className="mt-5 grid gap-6 sm:grid-cols-2">
         <div>
-          <h3 className="mb-2 font-semibold text-petrol-900">Inhalte</h3>
+          <h2 className="mb-2 font-semibold text-petrol-900">Inhalte</h2>
           <ul className="list-disc pl-5 text-sm text-gray-800">
             {einheit.intro.inhalte.map((i) => (
               <li key={i}>{i}</li>
@@ -113,7 +113,7 @@ function IntroAnsicht({
           </ul>
         </div>
         <div>
-          <h3 className="mb-2 font-semibold text-petrol-900">Lernziele</h3>
+          <h2 className="mb-2 font-semibold text-petrol-900">Lernziele</h2>
           <ul className="list-disc pl-5 text-sm text-gray-800">
             {einheit.intro.lernziele.map((z) => (
               <li key={z}>{z}</li>

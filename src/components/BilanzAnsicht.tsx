@@ -51,9 +51,9 @@ function Seite({
 }) {
   return (
     <div className="flex-1">
-      <h4 className="mb-2 border-b-2 border-petrol-700 pb-1 text-sm font-semibold text-petrol-900">
+      <h3 className="mb-2 border-b-2 border-petrol-700 pb-1 text-sm font-semibold text-petrol-900">
         {titel}
-      </h4>
+      </h3>
       {gruppen.map((g) => (
         <GruppenBlock key={g.name} gruppe={g} hervorgehoben={hervorgehoben} />
       ))}

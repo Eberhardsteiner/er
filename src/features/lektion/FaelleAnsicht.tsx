@@ -79,7 +79,7 @@ function FallKarte({ lektion, fall }: { lektion: Lektion | Zusatzmodul; fall: Fa
   return (
     <Card>
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-semibold text-petrol-900">{fall.titel}</h3>
+        <h2 className="font-semibold text-petrol-900">{fall.titel}</h2>
         <div className="flex gap-2">
           {hilfeGenutzt ? <Badge farbe="warnung">Hilfe genutzt</Badge> : null}
           {loesungGenutzt ? <Badge farbe="fehler">Lösung genutzt</Badge> : null}
@@ -169,9 +169,9 @@ function KennwortGate({
 
   return (
     <Card className="border-amber-500 bg-amber-500/5">
-      <h3 className="font-semibold text-petrol-900">
+      <h2 className="font-semibold text-petrol-900">
         Geschafft! Hol Dir jetzt das Kennwort vom Trainer, um Deine Auswertung zu öffnen.
-      </h3>
+      </h2>
       <div className="mt-4 flex items-end gap-3">
         <div className="max-w-xs flex-1">
           <TextFeld

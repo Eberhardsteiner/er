@@ -63,7 +63,9 @@ export function App() {
           />
           <Route path="/trainer" element={<TrainerSeite />} />
         </Route>
-        <Route path="*" element={<Navigate to="/start" replace />} />
+        {/* Unbekannte Routen landen freundlich auf dem Dashboard. Ohne
+            Spielstand leitet MitName von dort weiter zum Start. */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </HashRouter>
   );

@@ -22,6 +22,7 @@ import { pruefeModulKennwort } from '../../engine/kennwort';
 import { MAX_PUNKTE_GESAMT } from '../../engine/scoring';
 import { rundenPunkte, useSpielstand } from '../../store/spielstand';
 import type { RundenStand } from '../../store/spielstand';
+import { SpielstandTransfer } from '../../components/SpielstandTransfer';
 
 function statusInfo(stand: RundenStand): { label: string; farbe: 'grau' | 'petrol' | 'amber' | 'erfolg' } {
   if (stand.status === 'gesperrt') return { label: 'Gesperrt', farbe: 'grau' };
@@ -67,7 +68,14 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
       onClick={() => {
         if (!gesperrt) navigate(`/runde/${rundenId}`);
       }}
+      onKeyDown={(e) => {
+        if (!gesperrt && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          navigate(`/runde/${rundenId}`);
+        }
+      }}
       role={gesperrt ? undefined : 'button'}
+      tabIndex={gesperrt ? undefined : 0}
       aria-label={
         gesperrt
           ? `${lektion.titel}, gesperrt`
@@ -94,7 +102,7 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
       <div className="mt-3 flex items-center justify-between">
         <Badge farbe={info.farbe}>{info.label}</Badge>
         {stand.status === 'ausgewertet' && !stand.uebersprungen ? (
-          <span className="text-sm font-semibold text-amber-600">{punkte} von 100 Punkten</span>
+          <span className="text-sm font-semibold text-amber-700">{punkte} von 100 Punkten</span>
         ) : null}
       </div>
     </Card>
@@ -135,7 +143,14 @@ function ModulKarte({ modul }: { modul: Zusatzmodul }) {
       onClick={() => {
         if (spielbar) navigate(`/modul/${modul.id}`);
       }}
+      onKeyDown={(e) => {
+        if (spielbar && (e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+          e.preventDefault();
+          navigate(`/modul/${modul.id}`);
+        }
+      }}
       role={spielbar ? 'button' : undefined}
+      tabIndex={spielbar ? 0 : undefined}
       aria-label={spielbar ? `Modul ${modul.titel} öffnen` : `Modul ${modul.titel}`}
     >
       <div>
@@ -168,7 +183,7 @@ function ModulKarte({ modul }: { modul: Zusatzmodul }) {
         ) : modul.shell ? (
           <Badge farbe="grau">Inhalt folgt in Kürze</Badge>
         ) : ausgewertet ? (
-          <span className="text-sm font-semibold text-amber-600">
+          <span className="text-sm font-semibold text-amber-700">
             {stand ? rundenPunkte(stand) : 0} von 100 Zusatzpunkten
           </span>
         ) : (
@@ -325,6 +340,13 @@ export function DashboardSeite() {
           ) : null}
         </section>
       ) : null}
+
+      <section aria-label="Spielstand sichern und laden" className="mt-10">
+        <h2 className="text-xl font-bold text-petrol-900">Spielstand</h2>
+        <div className="mt-3">
+          <SpielstandTransfer />
+        </div>
+      </section>
     </div>
   );
 }

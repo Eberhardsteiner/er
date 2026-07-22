@@ -28,6 +28,7 @@ export function OnboardingSeite() {
 
   return (
     <div className="mx-auto max-w-xl">
+      <h1 className="mb-4 text-2xl font-bold text-petrol-900">Deine Tour durch das Planspiel</h1>
       <Card>
         <div className="flex items-start gap-4">
           <div

@@ -5,6 +5,7 @@ import { kennwortFuerModul, kennwortFuerRunde, trainerKennwort } from '../../eng
 import { useSpielstand } from '../../store/spielstand';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
+import { SpielstandTransfer } from '../../components/SpielstandTransfer';
 import { Tabelle } from '../../components/Tabelle';
 import { WarnModal } from '../../components/WarnModal';
 
@@ -190,6 +191,9 @@ export function TrainerSeite() {
         ) : (
           <p className="mt-3 text-xs text-gray-500">Kein Spielstand vorhanden.</p>
         )}
+        <div className="mt-4 border-t border-gray-200 pt-4">
+          <SpielstandTransfer />
+        </div>
       </Card>
 
       <WarnModal

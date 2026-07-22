@@ -195,3 +195,5 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   vereinfachend ausgeklammert, das Finanzergebnis ist 0 (Darlehen im ersten
   Jahr zins- und tilgungsfrei gestellt). Damit sind alle vier Zusatzmodule
   vollständig, es folgt Phase 9.
+
+Stand v1.0.0, Contentumfang abgeschlossen, Phase 9 umgesetzt am 22.07.2026.

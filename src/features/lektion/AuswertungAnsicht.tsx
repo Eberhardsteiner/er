@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Download, XCircle } from 'lucide-react';
 import type { Fall, Lektion, RundenId, Teilaufgabe, Zusatzmodul } from '../../content/typen';
 import { aktuelleVertiefungsbilanz, bilanzNachRunde } from '../../engine/ableitung';
-import { geaendertePostenIds } from '../../engine/bilanz';
+import { formatZahl, geaendertePostenIds } from '../../engine/bilanz';
 import { maxPunkteFall, punkteTeilaufgabe } from '../../engine/scoring';
 import { holeStand, istModulId, rundenPunkte, useSpielstand } from '../../store/spielstand';
 import type { FallStand } from '../../store/spielstand';
@@ -25,7 +25,7 @@ function musterwertAlsText(teilaufgabe: Teilaufgabe): string {
   if (teilaufgabe.typ === 'choice') {
     return teilaufgabe.optionen[teilaufgabe.richtig] ?? '';
   }
-  return `${teilaufgabe.loesung}${teilaufgabe.einheit ? ` ${teilaufgabe.einheit}` : ''}`;
+  return `${formatZahl(teilaufgabe.loesung)}${teilaufgabe.einheit ? ` ${teilaufgabe.einheit}` : ''}`;
 }
 
 function FallErgebnis({ fall, fallStand }: { fall: Fall; fallStand: FallStand | undefined }) {
@@ -33,7 +33,7 @@ function FallErgebnis({ fall, fallStand }: { fall: Fall; fallStand: FallStand | 
   return (
     <Card>
       <div className="flex items-start justify-between gap-3">
-        <h4 className="font-semibold text-petrol-900">{fall.titel}</h4>
+        <h3 className="font-semibold text-petrol-900">{fall.titel}</h3>
         <div className="flex gap-2">
           {fallStand?.hilfeGenutzt ? <Badge farbe="warnung">Hilfe genutzt</Badge> : null}
           {fallStand?.loesungGenutzt ? <Badge farbe="fehler">Lösung genutzt</Badge> : null}
@@ -111,7 +111,7 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
   return (
     <div className="flex flex-col gap-6">
       <Card className="bg-petrol-900 text-white">
-        <h3 className="text-lg font-semibold">Deine Auswertung</h3>
+        <h2 className="text-lg font-semibold">Deine Auswertung</h2>
         <div className="mt-4 grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-3xl font-bold text-amber-500">
@@ -135,7 +135,7 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
       </Card>
 
       <section aria-label="Quizergebnis">
-        <h3 className="mb-3 text-lg font-semibold text-petrol-900">Quiz</h3>
+        <h2 className="mb-3 text-lg font-semibold text-petrol-900">Quiz</h2>
         {stand.quizUebersprungen ? (
           <Card>
             <p className="text-sm text-gray-700">
@@ -179,7 +179,7 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
       </section>
 
       <section aria-label="Fallergebnisse">
-        <h3 className="mb-3 text-lg font-semibold text-petrol-900">Fälle</h3>
+        <h2 className="mb-3 text-lg font-semibold text-petrol-900">Fälle</h2>
         <div className="flex flex-col gap-3">
           {lektion.faelle.map((fall) => (
             <FallErgebnis key={fall.id} fall={fall} fallStand={stand.fallStaende[fall.id]} />
@@ -191,9 +191,9 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
         <section
           aria-label={istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
         >
-          <h3 className="mb-3 text-lg font-semibold text-petrol-900">
+          <h2 className="mb-3 text-lg font-semibold text-petrol-900">
             {istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
-          </h3>
+          </h2>
           <Card>
             {lektion.bilanzDelta ? (
               <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
@@ -216,9 +216,9 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
 
       {guv && guv.length > 0 ? (
         <section aria-label="Gewinn- und Verlustrechnung">
-          <h3 className="mb-3 text-lg font-semibold text-petrol-900">
+          <h2 className="mb-3 text-lg font-semibold text-petrol-900">
             Gewinn- und Verlustrechnung
-          </h3>
+          </h2>
           <Card>
             {guvStattBilanz ? (
               <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">

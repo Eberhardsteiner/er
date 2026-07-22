@@ -59,7 +59,7 @@ export const modulZ4: Zusatzmodul = {
       bloecke: [
         {
           typ: 'absatz',
-          text: 'Das Gesamtkostenverfahren reiht (verkürzt): Umsatzerlöse, Bestandsveränderungen, aktivierte Eigenleistungen und sonstige Erträge, dann Materialaufwand, Personalaufwand, Abschreibungen (getrennt nach Anlagevermögen und außergewöhnlichen Abwertungen des Umlaufvermögens) und sonstige betriebliche Aufwendungen. Die Zwischensumme daraus ist wirtschaftlich das Betriebsergebnis (§ 231 Abs 2 Z 1 bis 9 UGB).',
+          text: 'Das Gesamtkostenverfahren reiht (verkürzt): Umsatzerlöse, Bestandsveränderungen, aktivierte Eigenleistungen und sonstige Erträge, dann Materialaufwand, Personalaufwand, Abschreibungen (getrennt nach Anlagevermögen und außergewöhnlichen Abwertungen des Umlaufvermögens) und sonstige betriebliche Aufwendungen. Die Zwischensumme daraus ist wirtschaftlich das Betriebsergebnis (Zwischensumme nach § 231 Abs 2 Z 9 UGB aus den Posten Z 1 bis 8).',
         },
         {
           typ: 'absatz',
@@ -389,7 +389,7 @@ export const modulZ4: Zusatzmodul = {
       hilfe:
         'GKV: Umsatz plus Bestandserhöhung minus Gesamtaufwand. UKV: Umsatz minus Aufwand der abgesetzten Produkte. Und denk an Runde 2: einmal gewählt, stetig beibehalten.',
       loesung:
-        'Gesamtkostenverfahren: 100 plus 20 minus 110 gleich 10. Umsatzkostenverfahren: 100 minus 90 gleich 10. Beide Verfahren liefern zwingend denselben Gewinn, sie unterscheiden sich nur im Ausweis: alle Periodenkosten mit Bestandsausgleich gegen die Kosten der abgesetzten Leistungen. Zulässig sind beide (§ 231 Abs 1 UGB), Kapitalgesellschaften stellen in Staffelform auf, und die getroffene Wahl bindet über die Stetigkeit (§ 201 Abs 2 Z 1 UGB).',
+        'Gesamtkostenverfahren: 100 plus 20 minus 110 gleich 10. Umsatzkostenverfahren: 100 minus 90 gleich 10. Beide Verfahren liefern zwingend denselben Gewinn, sie unterscheiden sich nur im Ausweis: alle Periodenkosten mit Bestandsausgleich gegen die Kosten der abgesetzten Leistungen. Zulässig sind beide (§ 231 Abs 1 UGB), Kapitalgesellschaften stellen in Staffelform auf, und die getroffene Wahl bindet über die Stetigkeit (Darstellungsstetigkeit, § 223 Abs 1 UGB).',
     },
     {
       id: 'FZ4-3',

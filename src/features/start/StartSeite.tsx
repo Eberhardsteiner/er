@@ -4,6 +4,8 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { Modal } from '../../components/Modal';
 import { TextFeld } from '../../components/Eingabefeld';
+import { SystemHinweise } from '../../components/SystemHinweise';
+import { UeberPanel } from '../../components/UeberPanel';
 import { WarnModal } from '../../components/WarnModal';
 import { useSpielstand, rundenPunkte } from '../../store/spielstand';
 import { pruefeTrainerKennwort, sprungziel } from '../../engine/kennwort';
@@ -82,6 +84,7 @@ export function StartSeite() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-seite px-4 py-10">
       <div className="w-full max-w-xl">
+        <SystemHinweise />
         <h1 className="text-center text-4xl font-bold text-petrol-900">AlpenRad</h1>
         <p className="mt-1 text-center text-lg text-petrol-500">
           Ein Planspiel zum Jahresabschluss nach UGB
@@ -116,7 +119,7 @@ export function StartSeite() {
           </div>
         </Card>
 
-        <footer className="mt-10 text-center">
+        <footer className="mt-10 flex items-center justify-center gap-6 text-center">
           <button
             type="button"
             className="text-xs text-gray-400 underline hover:text-petrol-500"
@@ -124,6 +127,7 @@ export function StartSeite() {
           >
             Trainerzugang
           </button>
+          <UeberPanel />
         </footer>
       </div>
 

@@ -4,6 +4,7 @@
 
 import autoTable from 'jspdf-autotable';
 import type { Bilanz, Teilaufgabe, Zusatzmodul } from '../content/typen';
+import { formatZahl } from '../engine/bilanz';
 import { maxPunkteFall, punkteTeilaufgabe } from '../engine/scoring';
 import type { ModulStand } from '../store/spielstand';
 import {
@@ -32,7 +33,7 @@ function eingabeAlsText(teilaufgabe: Teilaufgabe, eingabe: string | number | nul
 
 function musterwertAlsText(teilaufgabe: Teilaufgabe): string {
   if (teilaufgabe.typ === 'choice') return teilaufgabe.optionen[teilaufgabe.richtig] ?? '';
-  return `${teilaufgabe.loesung}${teilaufgabe.einheit ? ` ${teilaufgabe.einheit}` : ''}`;
+  return `${formatZahl(teilaufgabe.loesung)}${teilaufgabe.einheit ? ` ${teilaufgabe.einheit}` : ''}`;
 }
 
 export function erzeugeModulPdf(

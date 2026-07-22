@@ -23,7 +23,7 @@ function BlockAnsicht({ block }: { block: KachelBlock }) {
     case 'beispiel':
       return (
         <div className="mb-3 rounded-lg border-l-4 border-amber-500 bg-amber-500/10 p-3 text-sm text-gray-800">
-          <p className="mb-1 text-xs font-semibold text-amber-600 uppercase">Beispiel</p>
+          <p className="mb-1 text-xs font-semibold text-amber-700 uppercase">Beispiel</p>
           {block.text}
         </div>
       );

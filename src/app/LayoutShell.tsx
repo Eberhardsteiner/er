@@ -4,6 +4,8 @@ import { useSpielstand } from '../store/spielstand';
 import { useUi } from '../store/uiStore';
 import { gesamtPunkte } from '../engine/ableitung';
 import { MAX_PUNKTE_GESAMT } from '../engine/scoring';
+import { SystemHinweise } from '../components/SystemHinweise';
+import { UeberPanel } from '../components/UeberPanel';
 import { ToastContainer } from '../components/Toast';
 import { NotizbuchLeiste } from '../features/notizen/NotizbuchLeiste';
 import { HilfeLeiste } from '../features/hilfe/HilfeLeiste';
@@ -18,6 +20,8 @@ export function LayoutShell() {
   const runden = useSpielstand((s) => s.runden);
   const oeffneNotizbuch = useUi((s) => s.oeffneNotizbuch);
   const oeffneHilfe = useUi((s) => s.oeffneHilfe);
+  const notizbuchOffen = useUi((s) => s.notizbuchOffen);
+  const hilfeOffen = useUi((s) => s.hilfeOffen);
   const navigate = useNavigate();
 
   const punkte = gesamtPunkte(runden);
@@ -43,18 +47,20 @@ export function LayoutShell() {
             <button
               type="button"
               aria-label="Notizbuch öffnen"
+              aria-expanded={notizbuchOffen}
               className="rounded p-2 hover:bg-petrol-700"
               onClick={oeffneNotizbuch}
             >
-              <NotebookPen size={20} />
+              <NotebookPen size={20} aria-hidden="true" />
             </button>
             <button
               type="button"
               aria-label="Bedienhilfe öffnen"
+              aria-expanded={hilfeOffen}
               className="rounded p-2 hover:bg-petrol-700"
               onClick={oeffneHilfe}
             >
-              <CircleHelp size={20} />
+              <CircleHelp size={20} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -82,9 +88,15 @@ export function LayoutShell() {
         </div>
       ) : null}
 
+      <SystemHinweise />
+
       <main className="mx-auto max-w-[1100px] px-4 py-8">
         <Outlet />
       </main>
+
+      <footer className="mx-auto max-w-[1100px] px-4 pb-6 text-center">
+        <UeberPanel />
+      </footer>
 
       <NotizbuchLeiste />
       <HilfeLeiste />
