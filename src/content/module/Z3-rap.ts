@@ -119,7 +119,7 @@ export const modulZ3: Zusatzmodul = {
         },
         {
           typ: 'absatz',
-          text: 'Das ist geltendes Recht eine Pflicht, kein Wahlrecht: Das Disagio wird aktiviert und über die Kreditlaufzeit verteilt, linear oder nach der Effektivzinsmethode. So trifft der Zinsaufwand jede Periode der Kreditnutzung, nicht nur das Aufnahmejahr.',
+          text: 'Das ist geltendes Recht: eine Pflicht, kein Wahlrecht. Das Disagio wird aktiviert und über die Kreditlaufzeit verteilt, linear oder nach der Effektivzinsmethode. So trifft der Zinsaufwand jede Periode der Kreditnutzung, nicht nur das Aufnahmejahr.',
         },
         {
           typ: 'beispiel',

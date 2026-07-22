@@ -104,6 +104,9 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
     : bilanzNachRunde(lektion.id as RundenId);
   const hervorgehoben = lektion.bilanzDelta ? geaendertePostenIds(lektion.bilanzDelta) : undefined;
   const guv = istModul ? (lektion as Zusatzmodul).guv : undefined;
+  // Module ohne Bilanzdelta, aber mit GuV-Daten (Z4) zeigen anstelle der
+  // Bilanzveraenderung die GuV-Staffel mit Verprobungshinweis.
+  const guvStattBilanz = istModul && !!guv && guv.length > 0 && !lektion.bilanzDelta;
 
   return (
     <div className="flex flex-col gap-6">
@@ -184,28 +187,32 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
         </div>
       </section>
 
-      <section aria-label={istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}>
-        <h3 className="mb-3 text-lg font-semibold text-petrol-900">
-          {istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
-        </h3>
-        <Card>
-          {lektion.bilanzDelta ? (
-            <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
-              {lektion.bilanzDelta.erlaeuterung}
-            </p>
-          ) : istModul ? (
-            <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
-              Dieses Modul verändert die Vertiefungsbilanz nicht.
-            </p>
-          ) : (
-            <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
-              In dieser Runde bleibt die Bilanz unverändert. Ab Runde 3 arbeiten Deine Fälle direkt
-              in der Bilanz.
-            </p>
-          )}
-          <BilanzAnsicht bilanz={bilanz} hervorgehoben={hervorgehoben} />
-        </Card>
-      </section>
+      {!guvStattBilanz ? (
+        <section
+          aria-label={istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
+        >
+          <h3 className="mb-3 text-lg font-semibold text-petrol-900">
+            {istModul ? 'Vertiefungsbilanz nach diesem Modul' : 'Bilanz nach der Runde'}
+          </h3>
+          <Card>
+            {lektion.bilanzDelta ? (
+              <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+                {lektion.bilanzDelta.erlaeuterung}
+              </p>
+            ) : istModul ? (
+              <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+                Dieses Modul verändert die Vertiefungsbilanz nicht.
+              </p>
+            ) : (
+              <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+                In dieser Runde bleibt die Bilanz unverändert. Ab Runde 3 arbeiten Deine Fälle
+                direkt in der Bilanz.
+              </p>
+            )}
+            <BilanzAnsicht bilanz={bilanz} hervorgehoben={hervorgehoben} />
+          </Card>
+        </section>
+      ) : null}
 
       {guv && guv.length > 0 ? (
         <section aria-label="Gewinn- und Verlustrechnung">
@@ -213,6 +220,12 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion | Zusatzmodul 
             Gewinn- und Verlustrechnung
           </h3>
           <Card>
+            {guvStattBilanz ? (
+              <p className="mb-4 rounded-lg bg-petrol-100 p-3 text-sm text-petrol-900">
+                Dieses Modul bucht nichts. Es erklärt, woher das Ergebnis kommt, und verprobt die
+                GuV gegen den Bilanzgewinn der Schlussbilanz.
+              </p>
+            ) : null}
             <GuVStaffel zeilen={guv} />
           </Card>
         </section>

@@ -189,3 +189,9 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   „Rechnungsabgrenzungsposten" erscheinen erstmals in der Bilanz (§ 224 Abs 2 C
   und Abs 3 D UGB). Vertiefungsbilanz nach Z3 allein: 720.805 (Bank 87.000).
   Kombination Z1 plus Z2 plus Z3: 765.805 (Bank 132.000).
+- Z4 GuV bucht nichts. Es leitet die Jahres-GuV des Spieljahres in Staffelform
+  nach dem Gesamtkostenverfahren ab (§ 231 Abs 2 UGB, vereinfacht) und stimmt
+  sie auf den Bilanzgewinn 2.705 ab. Steuern vom Einkommen sind im Planspiel
+  vereinfachend ausgeklammert, das Finanzergebnis ist 0 (Darlehen im ersten
+  Jahr zins- und tilgungsfrei gestellt). Damit sind alle vier Zusatzmodule
+  vollständig, es folgt Phase 9.
