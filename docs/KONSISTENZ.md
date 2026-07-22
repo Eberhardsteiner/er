@@ -117,6 +117,9 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   Verbindlichkeiten aus Lieferungen und Leistungen 0. Das Gründungsjahr endet
   mit einer knappen schwarzen Null, die Bilanzsumme liegt im Rahmen der
   Planzahl von rund 800.000.
+- Gewährleistungserfahrungssatz einheitlich in allen Runden: rund 3 Prozent
+  des Umsatzes (verwendet in Runde 2 Kachel 4, Runde 3 Fall F3-2, Runde 7 Fall
+  F7-1 mit 5.400 auf 180.000).
 - Das Spieljahr ist damit fachlich abgeschlossen. Es folgt Phase 9
   (Feinschliff und Produktions-Deployment).
 

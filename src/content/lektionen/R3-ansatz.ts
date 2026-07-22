@@ -375,7 +375,7 @@ export const lektionR3: Lektion = {
       id: 'F3-2',
       titel: 'Die Passivseite im Blick',
       sachverhalt:
-        'Nach den Investitionen sortierst Du mit Mag. Huber die Passivseite und alles, was daneben steht. Erstens: das Bankdarlehen über 150.000 Euro. Zweitens: die offenen Lieferantenrechnungen aus dem Vorratskauf, 60.000 Euro, Zahlungsziel 60 Tage. Drittens: erfahrungsgemäß verursachen rund 2 Prozent der verkauften Räder Gewährleistungsarbeiten, deren genaue Höhe offen ist. Viertens: AlpenRad übernimmt eine Bürgschaft für einen Modernisierungskredit der Radwerkstatt Moser, mit einer Inanspruchnahme rechnet niemand.',
+        'Nach den Investitionen sortierst Du mit Mag. Huber die Passivseite und alles, was daneben steht. Erstens: das Bankdarlehen über 150.000 Euro. Zweitens: die offenen Lieferantenrechnungen aus dem Vorratskauf, 60.000 Euro, Zahlungsziel 60 Tage. Drittens: erfahrungsgemäß verursachen Garantiefälle Kosten von rund 3 Prozent des Umsatzes, deren genaue Höhe und deren Zeitpunkt offen sind. Viertens: AlpenRad übernimmt eine Bürgschaft für einen Modernisierungskredit der Radwerkstatt Moser, mit einer Inanspruchnahme rechnet niemand.',
       teilaufgaben: [
         {
           id: 'F3-2a',
