@@ -160,9 +160,18 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   Rechnungsabgrenzungsposten (TimeGate), Z4 GuV (ClearWater).
 - Modul-Deltas wirken nur auf die Vertiefungsbilanz zum 1. Jänner, niemals auf
   die Kernkette (Gründungsbilanz bis Schlussbilanz 719.305). Jedes Modul-Delta
-  balanciert für sich auf Basis der Schlussbilanz, verschiedene Module
-  verändern niemals denselben Posten (Disjunktheit, vom Validator erzwungen).
+  balanciert für sich auf Basis der Schlussbilanz.
+- Verschiedene Module verändern niemals denselben Posten und legen keine
+  gleichnamigen Posten an. Einzige Ausnahme ist das gemeinsame Geldkonto
+  Guthaben bei Kreditinstituten, dessen Modul-Deltas additiv sind und
+  kommutieren.
 - Punkteregel: Jedes Modul bringt maximal 100 Zusatzpunkte (20 Quiz, 80
   Fälle), getrennt von der Kernwertung geführt. Der Rang berechnet sich
   unverändert nur aus den 700 Kernpunkten.
 - Sollwert: GuV-Ergebnis Z4 gleich 2.705 gleich Bilanzgewinn der Schlussbilanz.
+- Z1 Eigenkapital bucht zum 1. Jänner eine Kapitalerhöhung: Business-Angel
+  DI Petra Waldner übernimmt eine neue Stammeinlage von 50.000 nominal zum
+  Übernahmspreis von 60.000, voll bar einbezahlt. Delta: Bank plus 60.000,
+  Stammkapital plus 50.000, neuer Posten Kapitalrücklagen 10.000 (Aufgeld,
+  § 229 Abs 2 Z 1 UGB). Vertiefungsbilanz nach Z1 allein: 779.305.
+- Neue Nebenfigur: DI Petra Waldner, Business-Angel aus Graz.

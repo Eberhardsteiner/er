@@ -16,15 +16,22 @@ export function pruefeModulDeltaEinzeln(schlussbilanz: Bilanz, modul: Zusatzmodu
   }
 }
 
+// Das gemeinsame Geldkonto: Posten dieser Liste sind von der
+// Disjunktheitspruefung ausgenommen, denn alle Module buchen ueber die Bank.
+// Deltas sind reine Additionen auf den Betrag, Additionen kommutieren, die
+// Reihenfolgeunabhaengigkeit der Modulkombinationen bleibt deshalb gewahrt.
+export const GEMEINSAME_POSTEN: string[] = ['bank'];
+
 // Disjunktheitsregel: Kein Posten darf von mehr als einem Modul veraendert
-// oder angelegt werden. Dadurch sind die Deltas kommutativ und jede
-// Modulkombination geht auf.
+// oder angelegt werden, mit Ausnahme der GEMEINSAME_POSTEN. Dadurch sind die
+// Deltas kommutativ und jede Modulkombination geht auf.
 export function pruefeModulDisjunktheit(module: Zusatzmodul[]): string[] {
   const fehler: string[] = [];
   const belegt = new Map<string, string>();
   for (const modul of module) {
     if (!modul.bilanzDelta) continue;
     for (const postenId of geaendertePostenIds(modul.bilanzDelta)) {
+      if (GEMEINSAME_POSTEN.includes(postenId)) continue;
       const anderes = belegt.get(postenId);
       if (anderes && anderes !== modul.id) {
         fehler.push(

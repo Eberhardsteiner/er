@@ -117,14 +117,39 @@ describe('Modulregeln', () => {
         erlaeuterung: 'Test',
         neuerStichtagLabel: 'Kollision',
         aenderungen: [
-          { postenId: 'bank', delta: -1000 },
           { postenId: 'bankdarlehen', delta: -1000 },
+          { postenId: 'stammkapital', delta: 1000 },
         ],
       },
     };
-    const fehler = pruefeModulDisjunktheit([modulA, kollision]);
+    const fehler = pruefeModulDisjunktheit([modulB, kollision]);
     expect(fehler.length).toBeGreaterThan(0);
-    expect(fehler[0]).toContain('bank');
+    expect(fehler[0]).toContain('bankdarlehen');
+  });
+
+  it('nimmt das gemeinsame Geldkonto von der Disjunktheit aus', () => {
+    const auchBank: Zusatzmodul = {
+      ...modulB,
+      id: 'Z3',
+      bilanzDelta: {
+        erlaeuterung: 'Test',
+        neuerStichtagLabel: 'Bankbuchung',
+        neuePosten: [
+          {
+            seite: 'passiva',
+            gruppe: 'Verbindlichkeiten',
+            posten: { id: 'testC', name: 'Testposten Z3' },
+          },
+        ],
+        aenderungen: [
+          { postenId: 'bank', delta: 2000 },
+          { postenId: 'testC', delta: 2000 },
+        ],
+      },
+    };
+    // modulA bucht ebenfalls ueber die Bank, das ist erlaubt.
+    expect(pruefeModulDisjunktheit([modulA, auchBank])).toEqual([]);
+    expect(pruefeModulKombination(schlussBilanz(), [modulA, auchBank])).toEqual([]);
   });
 
   it('bestaetigt disjunkte Module und die Kombination', () => {

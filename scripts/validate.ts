@@ -15,6 +15,80 @@ import {
 // Sollwert fuer die GuV des Moduls Z4: Bilanzgewinn der Schlussbilanz.
 const GUV_SOLL_ERGEBNIS = 2705;
 
+// Modul-Kontrollwerte (je Modul allein auf Schlussbilanzbasis): exklusive
+// Posten mit absoluten Sollwerten, Posten des gemeinsamen Geldkontos
+// (GEMEINSAME_POSTEN) mit Delta-Sollwerten.
+interface ModulKontrollwerte {
+  bilanzsumme: number;
+  postenAbsolut: { postenId: string; betrag: number }[];
+  postenDelta: { postenId: string; delta: number }[];
+}
+
+const MODUL_KONTROLLWERTE: Partial<Record<ModulId, ModulKontrollwerte>> = {
+  Z1: {
+    bilanzsumme: 779305,
+    postenAbsolut: [
+      { postenId: 'stammkapital', betrag: 150000 },
+      { postenId: 'kapitalruecklage', betrag: 10000 },
+      { postenId: 'ergebnis', betrag: 2705 },
+    ],
+    postenDelta: [{ postenId: 'bank', delta: 60000 }],
+  },
+};
+
+function findePostenBetrag(bilanz: Bilanz, postenId: string): number | undefined {
+  return [...bilanz.aktiva, ...bilanz.passiva]
+    .flatMap((g) => g.posten)
+    .find((p) => p.id === postenId)?.betrag;
+}
+
+function pruefeModulKontrollwerte(modul: Zusatzmodul, schlussbilanz: Bilanz): string[] {
+  const kontrolle = MODUL_KONTROLLWERTE[modul.id];
+  if (!kontrolle) return [];
+  if (!modul.bilanzDelta) {
+    return [`Kontrollwert ${modul.id}: Kontrollwerte definiert, aber kein bilanzDelta vorhanden.`];
+  }
+  let vertieft: Bilanz;
+  try {
+    vertieft = wendeDeltaAn(schlussbilanz, modul.bilanzDelta);
+  } catch {
+    // Die Einzelbalance-Pruefung meldet diesen Fehler bereits.
+    return [];
+  }
+  const fehler: string[] = [];
+  for (const k of kontrolle.postenAbsolut) {
+    const betrag = findePostenBetrag(vertieft, k.postenId);
+    if (betrag === undefined) {
+      fehler.push(`Kontrollwert ${modul.id}: Posten "${k.postenId}" fehlt in der Vertiefungsbilanz.`);
+    } else if (betrag !== k.betrag) {
+      fehler.push(
+        `Kontrollwert ${modul.id}: Posten "${k.postenId}" hat ${betrag}, erwartet ${k.betrag}.`,
+      );
+    }
+  }
+  for (const k of kontrolle.postenDelta) {
+    const vorher = findePostenBetrag(schlussbilanz, k.postenId) ?? 0;
+    const nachher = findePostenBetrag(vertieft, k.postenId) ?? 0;
+    if (nachher - vorher !== k.delta) {
+      fehler.push(
+        `Kontrollwert ${modul.id}: Delta von "${k.postenId}" ist ${nachher - vorher}, erwartet ${k.delta}.`,
+      );
+    }
+  }
+  for (const [seite, gruppen] of [
+    ['Aktiva', vertieft.aktiva],
+    ['Passiva', vertieft.passiva],
+  ] as const) {
+    const summe = summeSeite(gruppen);
+    if (summe !== kontrolle.bilanzsumme) {
+      fehler.push(
+        `Kontrollwert ${modul.id}: ${seite}-Summe ist ${summe}, erwartet ${kontrolle.bilanzsumme}.`,
+      );
+    }
+  }
+  return fehler;
+}
+
 // Kontrollwerte der Musterbilanz je Runde (aus den Mega-Prompts der Phasen).
 // Die Kette Gruendungsbilanz, R3, R4 muss in Folge exakt stimmen.
 interface Kontrollwerte {
@@ -309,6 +383,7 @@ for (const modul of zusatzmodule) {
 
   const fehler = pruefeLektion(modul);
   fehler.push(...pruefeModulDeltaEinzeln(schlussbilanzFuerModule, modul));
+  fehler.push(...pruefeModulKontrollwerte(modul, schlussbilanzFuerModule));
   if (modul.guv) {
     try {
       pruefeGuV(modul.guv, GUV_SOLL_ERGEBNIS);
