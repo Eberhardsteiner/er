@@ -9,6 +9,7 @@ import { lektionR3 } from './lektionen/R3-ansatz';
 import { lektionR4 } from './lektionen/R4-bewertung';
 import { lektionR5 } from './lektionen/R5-anlagevermoegen';
 import { lektionR6 } from './lektionen/R6-umlaufvermoegen';
+import { lektionR7 } from './lektionen/R7-rueckstellungen';
 
 // Lektionen in Spielreihenfolge. R0 ist die Demo-Runde und nur noch im
 // Trainer-Modus sichtbar, fuer Studierende beginnt das Spiel mit R1.
@@ -20,6 +21,7 @@ export const lektionen: Lektion[] = [
   lektionR4,
   lektionR5,
   lektionR6,
+  lektionR7,
 ];
 
 // Alle Rundenplaetze in Spielreihenfolge, auch die noch nicht befuellten.
@@ -35,9 +37,8 @@ export function sichtbareLektionen(istTrainer: boolean): Lektion[] {
 }
 
 // Titel der noch nicht befuellten Runden laut Produktionsplan.
-export const platzhalterTitel: Partial<Record<RundenId, string>> = {
-  R7: 'Rückstellungen',
-};
+// Seit Runde 7 sind alle Runden befuellt, die Struktur bleibt fuer die Anzeige.
+export const platzhalterTitel: Partial<Record<RundenId, string>> = {};
 
 // Gruendungsbilanz der AlpenRad GmbH als Startbilanz.
 export const startBilanz: Bilanz = {

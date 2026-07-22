@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Lock, PlayCircle } from 'lucide-react';
+import { Award, CheckCircle2, Lock, PlayCircle } from 'lucide-react';
 import { Badge } from '../../components/Badge';
+import { Button } from '../../components/Button';
 import { BilanzAnsicht } from '../../components/BilanzAnsicht';
 import { Card } from '../../components/Card';
 import { alleRundenIds, findeLektion, platzhalterTitel } from '../../content';
@@ -88,6 +89,17 @@ function RundenKarte({ rundenId }: { rundenId: RundenId }) {
   );
 }
 
+// Regulaerer Weg zur Gesamtauswertung, sichtbar nach der R7-Auswertung.
+function GesamtButton() {
+  const navigate = useNavigate();
+  return (
+    <Button onClick={() => navigate('/gesamt')}>
+      <Award size={16} aria-hidden="true" />
+      Zur Gesamtauswertung
+    </Button>
+  );
+}
+
 export function DashboardSeite() {
   const name = useSpielstand((s) => s.name);
   const runden = useSpielstand((s) => s.runden);
@@ -111,6 +123,11 @@ export function DashboardSeite() {
         Dein Punktestand: {punkte} von {MAX_PUNKTE_GESAMT} Punkten
         {probelaufAusgewertet ? `, dazu ${probelauf} Punkte aus dem Probelauf` : ''}
       </p>
+      {runden.R7.status === 'ausgewertet' ? (
+        <div className="mt-4">
+          <GesamtButton />
+        </div>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-8 lg:flex-row">
         <div className="grid flex-1 grid-cols-1 gap-4 self-start md:grid-cols-2">

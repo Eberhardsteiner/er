@@ -99,6 +99,26 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   (Posten bleibt sichtbar).
 - Das Ergebnis ist damit erstmals positiv. Runde 7 mindert es noch durch die
   Rückstellungen des Jahresabschlusses.
+- Runde 7 bildet zum 31.12. drei Rückstellungen, gesamt 16.600:
+  Gewährleistungsrückstellung 5.400 (3 Prozent vom Jahresumsatz 180.000,
+  § 198 Abs 8 Z 1 UGB), Prozessrückstellung 8.000 (Lackschaden-Klage, Kosten
+  6.000 oder 8.000 gleichwahrscheinlich, der höhere Wert nach § 211 UGB),
+  Rückstellung für nicht konsumierten Urlaub 3.200 (§ 198 Abs 8 Z 4 lit c
+  UGB). Geprüft und NICHT gebildet: Drohverlustrückstellung für den
+  Februar-Liefervertrag (Erlös 66.000 über Kosten 63.000, kein
+  Verpflichtungsüberschuss) und Aufwandsrückstellung für die verschobene
+  Wartung 2.500 (Wahlrecht nach § 198 Abs 8 Z 2 UGB, Verzicht wegen des
+  angestrebten hohen Gewinnausweises, Wahl ist stetig beizubehalten).
+- Schlussbilanz zum 31.12. (nach Runde 7): Bilanzsumme 719.305. Aktiva
+  unverändert: Immaterielle 13.000, Grundstücke 128.400, Gebäude 295.855,
+  Maschinen 129.050, Vorräte 9.000, Forderungen 54.000, Bank 90.000. Passiva:
+  Stammkapital 100.000, Bilanzgewinn/Bilanzverlust plus 2.705, Rückstellungen
+  16.600, Verbindlichkeiten gegenüber Kreditinstituten 600.000,
+  Verbindlichkeiten aus Lieferungen und Leistungen 0. Das Gründungsjahr endet
+  mit einer knappen schwarzen Null, die Bilanzsumme liegt im Rahmen der
+  Planzahl von rund 800.000.
+- Das Spieljahr ist damit fachlich abgeschlossen. Es folgt Phase 9
+  (Feinschliff und Produktions-Deployment).
 
 ## Anlagenverzeichnis (Basis für die Abschreibungen in Runde 5)
 

@@ -203,6 +203,11 @@ export function AuswertungAnsicht({ lektion }: { lektion: Lektion }) {
           <Download size={16} aria-hidden="true" />
           PDF dieser Runde laden
         </Button>
+        {lektion.id === 'R7' ? (
+          <Button variante="sekundaer" onClick={() => navigate('/gesamt')}>
+            Zur Gesamtauswertung
+          </Button>
+        ) : null}
         <Button variante="sekundaer" onClick={() => navigate('/dashboard')}>
           Weiter
         </Button>
