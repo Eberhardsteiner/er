@@ -66,6 +66,21 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   aus Lieferungen und Leistungen 60.000.
 - Die knappe Bankliquidität von 30.000 ist gewollt (Story-Moment, Lena mahnt zur
   Disziplin).
+- Runde 5 bucht zum Abschlussstichtag zwei Blöcke: erstens die planmäßigen
+  Abschreibungen laut Anlagenverzeichnis, gesamt 15.695 (Immaterielle minus
+  2.000, Gebäude minus 3.745, Maschinen minus 9.950 aus Montagelinie 8.000 und
+  Schweißanlage 1.950), zweitens die außerplanmäßige Abschreibung der beim
+  Umzug beschädigten Montagelinie um 20.000 auf den beizulegenden Wert 92.000
+  (§ 204 Abs 2 UGB). Beide Blöcke mindern über das Ergebnis das Eigenkapital.
+- Musterbilanz nach Runde 5: Bilanzsumme 704.305. Aktiva: Immaterielle
+  Vermögensgegenstände 13.000, Grundstücke 128.400, Gebäude 295.855, Technische
+  Anlagen und Maschinen 129.050, Vorräte 108.000, Guthaben bei Kreditinstituten
+  30.000. Passiva: Stammkapital 100.000, Bilanzgewinn/Bilanzverlust minus
+  55.695, Verbindlichkeiten gegenüber Kreditinstituten 600.000, Verbindlichkeiten
+  aus Lieferungen und Leistungen 60.000.
+- Alle planmäßigen und außerplanmäßigen Abschreibungen des Spieljahres sind mit
+  Runde 5 vollständig gebucht. Die Runden 6 und 7 buchen keine weiteren
+  Abschreibungen auf das Anlagevermögen.
 
 ## Anlagenverzeichnis (Basis für die Abschreibungen in Runde 5)
 
@@ -86,6 +101,12 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   Die steuerliche Halbjahresregel (§ 7 Abs 2 EStG) ergäbe 20.695 statt 15.695
   (Mehraufwand 5.000 bei den Mai-Anschaffungen). Für Runde 5 gilt verbindlich
   15.695. Die Wahl ist stetig beizubehalten.
+- Update nach Runde 5: Montagelinie nach Unfallschaden außerplanmäßig
+  abgeschrieben, Buchwert zum 31.12. nunmehr 92.000. Die künftige planmäßige
+  Abschreibung verteilt den Restbuchwert auf die Restnutzungsdauer (betrifft
+  erst Folgejahre außerhalb des Spieljahres).
+- Die Wertpapier- und Firmenwert-Fälle der Runde 5 sind Übungsszenarien ohne
+  Bilanzwirkung (Steira Components AG, Planrechnung Radwerkstatt Moser).
 
 ## Rechtsquellenprinzip
 

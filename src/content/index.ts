@@ -7,6 +7,7 @@ import { lektionR1 } from './lektionen/R1-grundlagen';
 import { lektionR2 } from './lektionen/R2-gob';
 import { lektionR3 } from './lektionen/R3-ansatz';
 import { lektionR4 } from './lektionen/R4-bewertung';
+import { lektionR5 } from './lektionen/R5-anlagevermoegen';
 
 // Lektionen in Spielreihenfolge. R0 ist die Demo-Runde und nur noch im
 // Trainer-Modus sichtbar, fuer Studierende beginnt das Spiel mit R1.
@@ -16,6 +17,7 @@ export const lektionen: Lektion[] = [
   lektionR2,
   lektionR3,
   lektionR4,
+  lektionR5,
 ];
 
 // Alle Rundenplaetze in Spielreihenfolge, auch die noch nicht befuellten.
@@ -32,7 +34,6 @@ export function sichtbareLektionen(istTrainer: boolean): Lektion[] {
 
 // Titel der noch nicht befuellten Runden laut Produktionsplan.
 export const platzhalterTitel: Partial<Record<RundenId, string>> = {
-  R5: 'Anlagevermögen',
   R6: 'Umlaufvermögen',
   R7: 'Rückstellungen',
 };
