@@ -34,6 +34,14 @@ const MODUL_KONTROLLWERTE: Partial<Record<ModulId, ModulKontrollwerte>> = {
     ],
     postenDelta: [{ postenId: 'bank', delta: 60000 }],
   },
+  Z2: {
+    bilanzsumme: 704305,
+    postenAbsolut: [
+      { postenId: 'bankdarlehen', betrag: 560000 },
+      { postenId: 'erhalteneAnzahlungen', betrag: 25000 },
+    ],
+    postenDelta: [{ postenId: 'bank', delta: -15000 }],
+  },
 };
 
 function findePostenBetrag(bilanz: Bilanz, postenId: string): number | undefined {
@@ -411,7 +419,13 @@ const modulQuerFehler = [
   ...pruefeModulKombination(schlussbilanzFuerModule, zusatzmodule),
 ];
 if (modulQuerFehler.length === 0) {
-  console.log('Modulkombination: disjunkt und balanciert');
+  let kombiniert = schlussbilanzFuerModule;
+  for (const modul of zusatzmodule) {
+    if (modul.bilanzDelta) kombiniert = wendeDeltaAn(kombiniert, modul.bilanzDelta);
+  }
+  console.log(
+    `Modulkombination: disjunkt und balanciert, Bilanzsumme mit allen Modulen ${summeSeite(kombiniert.aktiva)}`,
+  );
 } else {
   befunde += modulQuerFehler.length;
   for (const f of modulQuerFehler) console.error(`  - ${f}`);

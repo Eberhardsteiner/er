@@ -33,6 +33,7 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Grazer Bike-Logistik GmbH & Co KG.
 - Steirische Landesbank.
 - Steira Components AG: fiktive börsennotierte AG für Wertpapier-Übungsszenarien.
+- DI Petra Waldner, Business-Angel aus Graz.
 
 ## Bilanzwirkung der Fälle
 
@@ -174,4 +175,9 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   Übernahmspreis von 60.000, voll bar einbezahlt. Delta: Bank plus 60.000,
   Stammkapital plus 50.000, neuer Posten Kapitalrücklagen 10.000 (Aufgeld,
   § 229 Abs 2 Z 1 UGB). Vertiefungsbilanz nach Z1 allein: 779.305.
-- Neue Nebenfigur: DI Petra Waldner, Business-Angel aus Graz.
+- Z2 Verbindlichkeiten bucht zum Jänner zwei Vorgänge: erste Tilgungsrate des
+  Investitionsdarlehens 40.000 gegen Bank (Bankdarlehen neu 560.000) und
+  erhaltene Anzahlung 25.000 der Stadt Graz für eine im Frühjahr zu liefernde
+  Lastenrad-Flotte (neuer Posten erhaltene Anzahlungen, ohne weitere
+  Spielwirkung). Vertiefungsbilanz nach Z2 allein: 704.305. Kombination Z1
+  plus Z2: 764.305 (Bank 135.000).
