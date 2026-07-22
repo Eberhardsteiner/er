@@ -28,3 +28,7 @@ Zwei Befunde wurden während der Endabnahme gefunden, sofort behoben und im selb
 ## Ergebnis
 
 Alle Punkte des Endabnahme-Protokolls sind erfüllt, keine offenen Befunde. Release v1.0.0 freigegeben.
+
+## Nachträge
+
+Hotfix v1.0.1 (22. Juli 2026): Fokusverlust in Modals mit Eingabefeld behoben (Fokusfalle lief bei jedem Rerender). Regressionstest ergänzt. Manuell nachgeprüft: flüssiges Tippen in allen drei Kennwort-Dialogen (Modul-Freischaltung, Rundensprung, Trainerzugang), Tab-Zirkulation, Esc und Fokusrückkehr unverändert intakt, WarnModal-Strecke für Hilfe und Lösung funktioniert, Konsole ohne Einträge.

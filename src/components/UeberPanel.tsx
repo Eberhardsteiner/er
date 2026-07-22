@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 import { Button } from './Button';
 import { Modal } from './Modal';
 
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.0.1';
 
 // Info-Panel "Ueber dieses Planspiel" (Phase 9): Version, Urheberrecht,
 // Rechtsstand und Kontakt. Der Ausloeser sitzt im Fuss der Layout-Shell

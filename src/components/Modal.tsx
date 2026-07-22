@@ -19,6 +19,15 @@ export function Modal({ offen, titel, onSchliessen, children, fussbereich, breit
   const dialogRef = useRef<HTMLDivElement>(null);
   const vorherFokussiert = useRef<HTMLElement | null>(null);
 
+  // Der Escape-Handler liest den Callback ueber ein Ref (Hotfix v1.0.1):
+  // Aufrufer uebergeben onSchliessen als Inline-Funktion mit neuer Identitaet
+  // je Render. Hinge der Fokusfallen-Effekt daran, liefe er bei jedem
+  // Tastendruck in kontrollierten Feldern neu und stiehlt den Fokus.
+  const onSchliessenRef = useRef(onSchliessen);
+  useEffect(() => {
+    onSchliessenRef.current = onSchliessen;
+  });
+
   useEffect(() => {
     if (!offen) return;
     vorherFokussiert.current = document.activeElement as HTMLElement | null;
@@ -29,7 +38,7 @@ export function Modal({ offen, titel, onSchliessen, children, fussbereich, breit
     function beiTaste(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         e.stopPropagation();
-        onSchliessen();
+        onSchliessenRef.current();
         return;
       }
       if (e.key !== 'Tab' || !dialog) return;
@@ -51,7 +60,8 @@ export function Modal({ offen, titel, onSchliessen, children, fussbereich, breit
       document.removeEventListener('keydown', beiTaste);
       vorherFokussiert.current?.focus();
     };
-  }, [offen, onSchliessen]);
+    // Nur beim Oeffnen und Schliessen, nie bei blossen Rerenders.
+  }, [offen]);
 
   if (!offen) return null;
 
