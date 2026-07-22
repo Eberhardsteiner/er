@@ -164,12 +164,12 @@ export const lektionR3: Lektion = {
       frage: 'Was prüfst Du beim Bilanzansatz zuerst?',
       antworten: [
         'Ob ein Bilanzierungsverbot greift',
-        'Ob überhaupt ein Vermögensgegenstand oder eine Schuld vorliegt',
         'Ob die Position wesentlich ist',
         'Ob die Anschaffungskosten bekannt sind',
+        'Ob überhaupt ein Vermögensgegenstand oder eine Schuld vorliegt',
         'Ob der Steuerberater zustimmt',
       ],
-      richtig: 1,
+      richtig: 3,
       erklaerung:
         'Ohne Vermögensgegenstand oder Schuld stellt sich die Ansatzfrage gar nicht. Danach folgen Zugehörigkeit, Verbote und Wahlrechte.',
     },
@@ -177,13 +177,13 @@ export const lektionR3: Lektion = {
       id: 'R3-Q3',
       frage: 'Die Gründungskosten der AlpenRad GmbH (Notar, Firmenbuch) sind...',
       antworten: [
-        '...als immaterielles Anlagevermögen zu aktivieren',
         '...als Aufwand zu erfassen, Aktivierung ist verboten',
+        '...als immaterielles Anlagevermögen zu aktivieren',
         '...wahlweise zu aktivieren',
         '...mit dem Stammkapital zu verrechnen',
         '...unter der Bilanz auszuweisen',
       ],
-      richtig: 1,
+      richtig: 0,
       erklaerung:
         '§ 197 Abs 1 UGB verbietet die Aktivierung von Gründungs- und Eigenkapitalbeschaffungsaufwand.',
     },
@@ -221,12 +221,12 @@ export const lektionR3: Lektion = {
         'Was erlaubt § 204 Abs 1a UGB für geringwertige Vermögensgegenstände des Anlagevermögens?',
       antworten: [
         'Den Verzicht auf jede Buchung',
-        'Die volle Abschreibung im Jahr der Anschaffung',
         'Den Ansatz zum doppelten Wert',
         'Die Umgliederung ins Umlaufvermögen',
         'Die Aktivierung ohne Beleg',
+        'Die volle Abschreibung im Jahr der Anschaffung',
       ],
-      richtig: 1,
+      richtig: 4,
       erklaerung:
         'Geringwertige Anlagegüter dürfen im Anschaffungsjahr voll abgeschrieben werden, ein Ausfluss der Wesentlichkeit.',
     },
@@ -265,11 +265,11 @@ export const lektionR3: Lektion = {
       antworten: [
         'Ja, Vorsicht geht immer vor',
         'Ja, bis 10 Prozent der Bilanzsumme',
-        'Nein, andere als die gesetzlich vorgesehenen Rückstellungen dürfen nicht gebildet werden',
         'Ja, mit Zustimmung der Gesellschafter',
+        'Nein, andere als die gesetzlich vorgesehenen Rückstellungen dürfen nicht gebildet werden',
         'Nein, GmbHs dürfen gar keine Rückstellungen bilden',
       ],
-      richtig: 2,
+      richtig: 3,
       erklaerung:
         '§ 198 Abs 8 Z 3 UGB verbietet Rückstellungen außerhalb der gesetzlich vorgesehenen Fälle. Pauschale Zukunftsvorsorge wäre Willkür.',
     },
@@ -278,12 +278,12 @@ export const lektionR3: Lektion = {
       frage: 'Welche Aussage zur Abschreibung stimmt?',
       antworten: [
         'Auch Vorräte werden planmäßig abgeschrieben',
-        'Nur abnutzbares Anlagevermögen wird planmäßig abgeschrieben',
         'Grundstücke werden planmäßig abgeschrieben',
         'Finanzanlagen werden planmäßig abgeschrieben',
         'Planmäßige Abschreibung ist ein Wahlrecht',
+        'Nur abnutzbares Anlagevermögen wird planmäßig abgeschrieben',
       ],
-      richtig: 1,
+      richtig: 4,
       erklaerung:
         'Planmäßig abgeschrieben wird nur abnutzbares Anlagevermögen (§ 204 UGB). Grundstücke und Finanzanlagen sind nicht abnutzbar, Umlaufvermögen kennt nur außerplanmäßige Abwertungen.',
     },
@@ -499,12 +499,12 @@ export const lektionR3: Lektion = {
           typ: 'choice',
           frage: 'Welche Gliederungsreihenfolge der Aktivseite entspricht § 224 UGB?',
           optionen: [
-            'Umlaufvermögen vor Anlagevermögen',
             'Anlagevermögen vor Umlaufvermögen',
+            'Umlaufvermögen vor Anlagevermögen',
             'Alphabetisch nach Postennamen',
             'Nach Betragshöhe absteigend',
           ],
-          richtig: 1,
+          richtig: 0,
           punkte: 5,
         },
         {
@@ -521,11 +521,11 @@ export const lektionR3: Lektion = {
           frage: 'Wo landet der Entwicklungsaufwand von 20.000 Euro?',
           optionen: [
             'Als immaterielles Anlagevermögen auf der Aktivseite',
-            'Als Aufwand, er mindert über das Ergebnis das Eigenkapital',
             'Als Rückstellung',
+            'Als Aufwand, er mindert über das Ergebnis das Eigenkapital',
             'Als Haftungsverhältnis unter der Bilanz',
           ],
-          richtig: 1,
+          richtig: 2,
           punkte: 5,
         },
         {
@@ -534,11 +534,11 @@ export const lektionR3: Lektion = {
           frage: 'Verändert die Bürgschaft für Moser die Bilanzsumme?',
           optionen: [
             'Ja, sie erhöht die Passiva um die Bürgschaftssumme',
-            'Nein, sie steht als Haftungsverhältnis unter der Bilanz',
             'Ja, sie mindert das Eigenkapital',
             'Nur, wenn Moser zahlt',
+            'Nein, sie steht als Haftungsverhältnis unter der Bilanz',
           ],
-          richtig: 1,
+          richtig: 3,
           punkte: 5,
         },
       ],

@@ -113,6 +113,18 @@ function pruefeLektion(lektion: Lektion): string[] {
     }
   }
 
+  // Gleichverteilung: Jede Antwortposition (0 bis 4) muss bei genau zwei der
+  // zehn Quizfragen richtig sein. Gilt fuer alle Lektionen dauerhaft.
+  if (lektion.quiz.length === 10) {
+    const verteilung = [0, 0, 0, 0, 0];
+    for (const frage of lektion.quiz) verteilung[frage.richtig]++;
+    if (verteilung.some((anzahl) => anzahl !== 2)) {
+      fehler.push(
+        `Die richtigen Antworten sind ungleich verteilt. Ist-Verteilung je Position 1 bis 5: ${verteilung.join('/')}, gefordert 2/2/2/2/2.`,
+      );
+    }
+  }
+
   // 2 bis 5 Faelle
   if (lektion.faelle.length < 2 || lektion.faelle.length > 5) {
     fehler.push(`2 bis 5 Fälle gefordert, gefunden: ${lektion.faelle.length}.`);
@@ -209,7 +221,11 @@ for (const lektion of lektionen) {
   }
 
   if (fehler.length === 0) {
-    console.log(`${lektion.id} (${lektion.titel}): in Ordnung`);
+    const verteilung = [0, 0, 0, 0, 0];
+    for (const frage of lektion.quiz) verteilung[frage.richtig]++;
+    console.log(
+      `${lektion.id} (${lektion.titel}): in Ordnung, Antwortverteilung ${verteilung.join('/')}`,
+    );
   } else {
     befunde += fehler.length;
     console.error(`${lektion.id} (${lektion.titel}): ${fehler.length} Befund(e)`);

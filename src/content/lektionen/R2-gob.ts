@@ -164,13 +164,13 @@ export const lektionR2: Lektion = {
       frage:
         'Ein Händler bestellt im Dezember, AlpenRad liefert im Jänner, bezahlt wird im Februar. Wann ist der Ertrag realisiert?',
       antworten: [
-        'Bei der Bestellung im Dezember',
         'Bei der Lieferung im Jänner',
+        'Bei der Bestellung im Dezember',
         'Beim Zahlungseingang im Februar',
         'Am Bilanzstichtag',
         'Wahlweise in einem der drei Monate',
       ],
-      richtig: 1,
+      richtig: 0,
       erklaerung:
         'Realisiert wird mit dem Umsatzakt, also wenn die Gefahr des zufälligen Untergangs übergeht, im Regelfall bei Lieferung (§ 201 Abs 2 Z 4 lit a UGB).',
     },
@@ -194,12 +194,12 @@ export const lektionR2: Lektion = {
       frage: 'Aus einem schwebenden Liefervertrag droht ein Verlust. Was verlangt das UGB?',
       antworten: [
         'Abwarten, bis geliefert wird',
-        'Den Verlust sofort berücksichtigen, etwa über eine Drohverlustrückstellung',
         'Den Verlust nur im Anhang erwähnen',
         'Den Verlust mit erwarteten Gewinnen aus anderen Verträgen verrechnen',
+        'Den Verlust sofort berücksichtigen, etwa über eine Drohverlustrückstellung',
         'Den Verlust erst bei Zahlung erfassen',
       ],
-      richtig: 1,
+      richtig: 3,
       erklaerung:
         'Imparitätsprinzip (§ 201 Abs 2 Z 4 lit b UGB): Drohende Verluste werden vorweggenommen, § 198 Abs 8 UGB regelt die Rückstellung dafür.',
     },
@@ -208,13 +208,13 @@ export const lektionR2: Lektion = {
       frage:
         'Ein Kunde war am 31.12. bereits zahlungsunfähig, Du erfährst es Mitte Jänner vor der Aufstellung. Was gilt für die Forderung?',
       antworten: [
-        'Wertbegründend, erst im neuen Jahr abschreiben',
         'Werterhellend, im Abschluss zum 31.12. berücksichtigen',
+        'Wertbegründend, erst im neuen Jahr abschreiben',
         'Es besteht ein Wahlrecht',
         'Nur ein Hinweis im Anhang',
         'Die Forderung bleibt unverändert, bis ein Gericht entscheidet',
       ],
-      richtig: 1,
+      richtig: 0,
       erklaerung:
         'Die Ursache (Zahlungsunfähigkeit) bestand am Stichtag, bekannt wurde sie vor der Aufstellung: werterhellend nach § 201 Abs 2 Z 4 lit b UGB.',
     },
@@ -223,12 +223,12 @@ export const lektionR2: Lektion = {
       frage: 'Am 10. Jänner brennt ein Teil des Lagers ab. Auswirkung auf den Abschluss zum 31.12.?',
       antworten: [
         'Werterhellend, im alten Abschluss berücksichtigen',
-        'Wertbegründend, keine Berücksichtigung im alten Abschluss',
         'Zur Hälfte im alten, zur Hälfte im neuen Jahr',
+        'Wertbegründend, keine Berücksichtigung im alten Abschluss',
         'Der Abschluss ist zu verschieben',
         'Im alten Jahr ist eine Rückstellung zu bilden',
       ],
-      richtig: 1,
+      richtig: 2,
       erklaerung:
         'Der Brand ist erst nach dem Stichtag entstanden, das Ereignis gehört ins neue Geschäftsjahr.',
     },
@@ -238,12 +238,12 @@ export const lektionR2: Lektion = {
         'AlpenRad hat eine Forderung gegen einen Wiener Händler (20.000 Euro) und eine Verbindlichkeit gegenüber der Radwerkstatt Moser (30.000 Euro). Darf für die Bilanz saldiert werden?',
       antworten: [
         'Ja, Ausweis einer Verbindlichkeit von 10.000 Euro',
-        'Nein, es gilt das Verrechnungsverbot, beide Posten sind brutto auszuweisen',
         'Ja, wenn beide Beträge fällig sind',
         'Nur die größere Position ist auszuweisen',
         'Es besteht ein Wahlrecht',
+        'Nein, es gilt das Verrechnungsverbot, beide Posten sind brutto auszuweisen',
       ],
-      richtig: 1,
+      richtig: 4,
       erklaerung:
         '§ 196 Abs 2 UGB verbietet die Verrechnung von Aktiv- und Passivposten. Hier stehen sich noch dazu verschiedene Vertragspartner gegenüber.',
     },
@@ -267,12 +267,12 @@ export const lektionR2: Lektion = {
       frage: 'Wann wird von Fortführungswerten auf Veräußerungswerte umgestellt?',
       antworten: [
         'Bei jedem Jahresverlust',
-        'Wenn tatsächliche oder rechtliche Gründe der Fortführung entgegenstehen',
         'Automatisch alle fünf Jahre',
         'Sobald die Hausbank es verlangt',
+        'Wenn tatsächliche oder rechtliche Gründe der Fortführung entgegenstehen',
         'Nie, die Fortführung gilt immer',
       ],
-      richtig: 1,
+      richtig: 3,
       erklaerung:
         '§ 201 Abs 2 Z 2 UGB: Die Fortführungsannahme gilt, solange ihr nichts Tatsächliches oder Rechtliches entgegensteht, etwa Zahlungsunfähigkeit mit geplanter Betriebseinstellung.',
     },
@@ -282,12 +282,12 @@ export const lektionR2: Lektion = {
         'AlpenRad nutzt eine unter Eigentumsvorbehalt gelieferte Maschine, trägt Nutzen und Risiko, hat aber noch nicht fertig bezahlt. Wer bilanziert die Maschine?',
       antworten: [
         'Der Verkäufer als rechtlicher Eigentümer',
-        'AlpenRad als wirtschaftlicher Eigentümer',
         'Beide je zur Hälfte',
         'Niemand, bis vollständig bezahlt ist',
         'Das Firmenbuchgericht entscheidet im Zweifel',
+        'AlpenRad als wirtschaftlicher Eigentümer',
       ],
-      richtig: 1,
+      richtig: 4,
       erklaerung:
         'Wirtschaftliche Betrachtungsweise (§ 196a UGB): Es zählt der wirtschaftliche Gehalt, nicht die rechtliche Form.',
     },
@@ -500,12 +500,12 @@ export const lektionR2: Lektion = {
           typ: 'choice',
           frage: 'Verdoppelung der Gewährleistungsrückstellung ohne neue Erkenntnisse?',
           optionen: [
-            'Zulässig, Vorsicht ist immer erlaubt',
             'Unzulässig, Schätzungen brauchen eine umsichtige Beurteilung samt Erfahrungswerten, Willkür verstößt gegen die Stetigkeit',
+            'Zulässig, Vorsicht ist immer erlaubt',
             'Zulässig mit Gesellschafterbeschluss',
             'Zulässig, wenn der Steuerberater zustimmt',
           ],
-          richtig: 1,
+          richtig: 0,
           punkte: 5,
         },
         {
@@ -527,11 +527,11 @@ export const lektionR2: Lektion = {
           frage: 'Unter welchen Voraussetzungen wäre ein Methodenwechsel zulässig?',
           optionen: [
             'Nie, Methoden sind für immer fixiert',
-            'Bei besonderen Umständen, mit Angabe, Begründung und Darstellung des Einflusses im Anhang',
             'Immer zum Jahreswechsel',
+            'Bei besonderen Umständen, mit Angabe, Begründung und Darstellung des Einflusses im Anhang',
             'Nur mit Bewilligung des Firmenbuchgerichts',
           ],
-          richtig: 1,
+          richtig: 2,
           punkte: 5,
         },
         {
@@ -540,11 +540,11 @@ export const lektionR2: Lektion = {
           frage: 'Zwingen die Anlaufverluste zur Bewertung mit Zerschlagungswerten?',
           optionen: [
             'Ja, Verluste beenden die Fortführungsannahme',
-            'Nein, es wird fortgeführt, solange nicht tatsächliche oder rechtliche Gründe entgegenstehen',
             'Ja, auf Verlangen der Bank',
             'Nein, Zerschlagungswerte gibt es im UGB nicht',
+            'Nein, es wird fortgeführt, solange nicht tatsächliche oder rechtliche Gründe entgegenstehen',
           ],
-          richtig: 1,
+          richtig: 3,
           punkte: 5,
         },
       ],

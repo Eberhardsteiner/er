@@ -162,13 +162,13 @@ export const lektionR1: Lektion = {
       id: 'R1-Q1',
       frage: 'Welche Aussage zum Rechnungswesen stimmt?',
       antworten: [
-        'Das interne Rechnungswesen dient der Selbstinformation des Managements und ist kaum gesetzlich geregelt',
         'Das externe Rechnungswesen ist freiwillig',
         'Der Jahresabschluss gehört zum internen Rechnungswesen',
         'Das interne Rechnungswesen richtet sich vor allem an Gläubiger',
+        'Das interne Rechnungswesen dient der Selbstinformation des Managements und ist kaum gesetzlich geregelt',
         'Kosten und Leistungen sind die Rechengrößen des externen Rechnungswesens',
       ],
-      richtig: 0,
+      richtig: 3,
       erklaerung:
         'Intern heißt Kosten- und Leistungsrechnung für das Management, kaum normiert. Extern heißt UGB-normierter Jahresabschluss für Außenstehende mit Aufwand und Ertrag.',
     },
@@ -176,13 +176,13 @@ export const lektionR1: Lektion = {
       id: 'R1-Q2',
       frage: 'Was gehört NICHT zu den Zielen des Jahresabschlusses?',
       antworten: [
+        'Ermittlung der Selbstkosten je Produkt',
         'Dokumentation der Geschäftsvorfälle',
         'Rechenschaft und Information',
-        'Ermittlung der Selbstkosten je Produkt',
         'Kapitalerhaltung durch Zahlungsbemessung',
         'Bemessung des ausschüttbaren Gewinns',
       ],
-      richtig: 2,
+      richtig: 0,
       erklaerung:
         'Selbstkosten je Produkt ermittelt die Kosten- und Leistungsrechnung, also das interne Rechnungswesen.',
     },
@@ -191,12 +191,12 @@ export const lektionR1: Lektion = {
       frage: 'Wo stehen die Rechnungslegungsvorschriften des UGB?',
       antworten: [
         'Im Ersten Buch, §§ 1 bis 58',
-        'Im Dritten Buch, §§ 189 bis 283',
         'Im Fünften Buch',
         'Im EStG',
         'Im GmbH-Gesetz',
+        'Im Dritten Buch, §§ 189 bis 283',
       ],
-      richtig: 1,
+      richtig: 4,
       erklaerung: 'Das Dritte Buch des UGB regelt die Rechnungslegung in den §§ 189 bis 283.',
     },
     {
@@ -233,13 +233,13 @@ export const lektionR1: Lektion = {
       frage:
         'Die Tischlerei Moser e.U. erzielt 500.000 Euro Umsatzerlöse. Rechnungslegungspflicht nach UGB?',
       antworten: [
+        'Nein, die Schwelle von 700.000 Euro ist nicht überschritten',
         'Ja, jeder Unternehmer ist pflichtig',
         'Ja, ab Eintragung im Firmenbuch',
-        'Nein, die Schwelle von 700.000 Euro ist nicht überschritten',
         'Nein, Einzelunternehmer sind nie pflichtig',
         'Ja, weil es ein Gewerbebetrieb ist',
       ],
-      richtig: 2,
+      richtig: 0,
       erklaerung:
         'Einzelunternehmer sind erst ab mehr als 700.000 Euro Umsatzerlösen rechnungslegungspflichtig (§ 189 Abs 1 Z 3 UGB).',
     },
@@ -249,11 +249,11 @@ export const lektionR1: Lektion = {
       antworten: [
         'Rückstellungen sind Eigenkapital',
         'Verbindlichkeiten sind ungewiss, Rückstellungen sicher',
-        'Rückstellungen sind Schulden, die dem Grunde oder der Höhe nach ungewiss sind',
         'Rückstellungen entstehen nur bei Verlusten',
         'Es gibt keinen Unterschied',
+        'Rückstellungen sind Schulden, die dem Grunde oder der Höhe nach ungewiss sind',
       ],
-      richtig: 2,
+      richtig: 4,
       erklaerung:
         'Beide sind Schulden. Sicher nach Grund und Höhe heißt Verbindlichkeit, ungewiss heißt Rückstellung.',
     },
@@ -292,11 +292,11 @@ export const lektionR1: Lektion = {
       antworten: [
         'Ja, jeder Abschluss einer Kapitalgesellschaft wird geprüft',
         'Ja, sobald sie mehr als 10 Arbeitnehmer hat',
-        'Nein, sie ist von der Prüfungspflicht ausgenommen',
         'Nein, GmbHs sind nie prüfungspflichtig',
+        'Nein, sie ist von der Prüfungspflicht ausgenommen',
         'Nur, wenn die Bank es verlangt',
       ],
-      richtig: 2,
+      richtig: 3,
       erklaerung:
         '§ 268 Abs 1 UGB nimmt kleine GmbHs ohne gesetzliche Aufsichtsratspflicht von der Abschlussprüfung aus. Mittelgroße und große Kapitalgesellschaften sind prüfungspflichtig.',
     },
@@ -473,11 +473,11 @@ export const lektionR1: Lektion = {
           frage: 'Gilt die Einordnung schon für das erste Geschäftsjahr?',
           optionen: [
             'Nein, erst nach zwei aufeinanderfolgenden Stichtagen',
-            'Ja, bei Neugründung zählt bereits der erste Abschlussstichtag',
             'Nein, erst ab dem dritten Geschäftsjahr',
+            'Ja, bei Neugründung zählt bereits der erste Abschlussstichtag',
             'Nur mit Bewilligung des Firmenbuchgerichts',
           ],
-          richtig: 1,
+          richtig: 2,
           punkte: 5,
         },
         {
@@ -499,11 +499,11 @@ export const lektionR1: Lektion = {
           frage: 'Was gilt für die Offenlegung?',
           optionen: [
             'Keine Offenlegung, kleine GmbHs sind befreit',
-            'Einreichung beim Firmenbuchgericht binnen neun Monaten, elektronisch, mit Erleichterungen für kleine GmbHs',
             'Veröffentlichung im Bundesanzeiger binnen zwölf Monaten',
             'Offenlegung nur auf Verlangen der Bank',
+            'Einreichung beim Firmenbuchgericht binnen neun Monaten, elektronisch, mit Erleichterungen für kleine GmbHs',
           ],
-          richtig: 1,
+          richtig: 3,
           punkte: 5,
         },
       ],

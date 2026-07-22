@@ -102,7 +102,7 @@ function leererFallStand(): FallStand {
 
 function anfangsZustand(): SpielStand {
   return {
-    version: 2,
+    version: 3,
     name: null,
     istTrainer: false,
     onboardingGesehen: false,
@@ -321,10 +321,15 @@ export const useSpielstand = create<SpielStand & SpielAktionen>()(
     }),
     {
       name: 'alpenrad-v1',
-      version: 2,
+      version: 3,
       // Migration alter Spielstaende. Version 1 (Phase 0): Das Spiel begann
       // mit der Demo-Runde R0. Seit Version 2 startet R1 offen, R0 ist nur
       // noch fuer den Trainer sichtbar. Bestehende R0-Daten bleiben erhalten.
+      // Version 3: Antwortreihenfolgen der Quizfragen und einiger
+      // Fall-Teilaufgaben wurden gleichverteilt umsortiert. Gespeicherte
+      // Punkte abgegebener Runden bleiben bewusst unveraendert, die
+      // Detailanzeige alter Auswertungen kann vom damals gewaehlten Text
+      // abweichen (akzeptiert, es spielen noch keine Studierenden).
       migrate: (persistedState, version) => {
         const stand = persistedState as SpielStand;
         if (version < 2 && stand.runden) {
