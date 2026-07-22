@@ -42,6 +42,14 @@ const MODUL_KONTROLLWERTE: Partial<Record<ModulId, ModulKontrollwerte>> = {
     ],
     postenDelta: [{ postenId: 'bank', delta: -15000 }],
   },
+  Z3: {
+    bilanzsumme: 720805,
+    postenAbsolut: [
+      { postenId: 'aktiveRap', betrag: 4500 },
+      { postenId: 'passiveRap', betrag: 1500 },
+    ],
+    postenDelta: [{ postenId: 'bank', delta: -3000 }],
+  },
 };
 
 function findePostenBetrag(bilanz: Bilanz, postenId: string): number | undefined {

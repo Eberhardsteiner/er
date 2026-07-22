@@ -34,6 +34,7 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
 - Steirische Landesbank.
 - Steira Components AG: fiktive börsennotierte AG für Wertpapier-Übungsszenarien.
 - DI Petra Waldner, Business-Angel aus Graz.
+- Kaffeerösterei Lend: Untermieterin der Werbefläche an der Halle.
 
 ## Bilanzwirkung der Fälle
 
@@ -181,3 +182,10 @@ Verbindliche Festlegungen für alle Folgephasen. Stand 21.07.2026.
   Lastenrad-Flotte (neuer Posten erhaltene Anzahlungen, ohne weitere
   Spielwirkung). Vertiefungsbilanz nach Z2 allein: 704.305. Kombination Z1
   plus Z2: 764.305 (Bank 135.000).
+- Z3 Rechnungsabgrenzungsposten bucht Ende Jänner zwei Vorgänge: Vorauszahlung
+  der Lagermiete für Feber bis April 4.500 (aktiver Rechnungsabgrenzungsposten)
+  und vereinnahmte Feber-Miete der Werbefläche 1.500 von der Kaffeerösterei
+  Lend (passiver Rechnungsabgrenzungsposten). Beide Gruppen
+  „Rechnungsabgrenzungsposten" erscheinen erstmals in der Bilanz (§ 224 Abs 2 C
+  und Abs 3 D UGB). Vertiefungsbilanz nach Z3 allein: 720.805 (Bank 87.000).
+  Kombination Z1 plus Z2 plus Z3: 765.805 (Bank 132.000).
